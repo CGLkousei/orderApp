@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 public class Web01Controller {
 
     @GetMapping("/restaurant/home")
-    public String displayHome(Model model){
+    public String displayCustomerHome(Model model){
         return "restaurant/home";
     }
 }
