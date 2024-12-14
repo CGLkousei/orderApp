@@ -1,11 +1,15 @@
 package com.example.web01.Class;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
 public class Customer {
     private int seatId;
     private int numOfPeople;
@@ -26,53 +30,5 @@ public class Customer {
 
     public Customer(){
         this(0, 0);
-    }
-
-    public int getSeatId() {
-        return seatId;
-    }
-
-    public void setSeatId(int seatId) {
-        this.seatId = seatId;
-    }
-
-    public int getNumOfPeople() {
-        return numOfPeople;
-    }
-
-    public void setNumOfPeople(int numOfPeople) {
-        this.numOfPeople = numOfPeople;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    public int getTotalMoney() {
-        return totalMoney;
-    }
-
-    public void setTotalMoney(int totalMoney) {
-        this.totalMoney = totalMoney;
-    }
-
-    public int getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-    public Map<Integer, Integer> getOrder() {
-        return order;
-    }
-
-    public void setOrder(Map<Integer, Integer> order) {
-        this.order = order;
     }
 }
