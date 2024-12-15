@@ -2,6 +2,8 @@ package com.example.web01.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Category")
 public class CategoryEntity {
@@ -14,6 +16,9 @@ public class CategoryEntity {
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private RestaurantEntity restaurant;
+
+    @OneToMany(mappedBy = "category")
+    private List<DishEntity> dishes;
 
     public Long getId() {
         return id;

@@ -36,6 +36,8 @@ public class CustomerController {
         List<DishEntity> dishes = dishService.getAllDishes();
 
         model.addAttribute("restaurants", restaurants);
+        model.addAttribute("categories", categories);
+        model.addAttribute("dishes", dishes);
 
         return "customer/customerHome";
     }

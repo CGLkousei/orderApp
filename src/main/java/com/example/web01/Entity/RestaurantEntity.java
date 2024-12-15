@@ -15,7 +15,7 @@ public class RestaurantEntity {
     private String name;
     private String email;
 
-    @OneToMany(mappedBy = "Restaurant")
+    @OneToMany(mappedBy = "restaurant")
     private List<CategoryEntity> categories;
 
     public Long getId() {
