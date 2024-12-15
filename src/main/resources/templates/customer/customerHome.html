@@ -8,5 +8,61 @@
 <body>
     <h2>注文画面</h2>
 
-    <p th:text="${customer.restaurantId}">レストランid</p>
+    <p>restaurants</p>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="restaurant : ${restaurants}">
+            <td th:text="${restaurant.id}"></td>
+            <td th:text="${restaurant.name}"></td>
+            <td th:text="${restaurant.email}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>categories</p>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>名前</th>
+            <th>restaurant id</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.id}"></td>
+            <td th:text="${category.name}"></td>
+            <td th:text="${category.restaurant.id}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>dishes</p>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>名前</th>
+            <th>価格</th>
+            <th>説明</th>
+            <th>category id</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dish : ${dishes}">
+            <td th:text="${dish.id}"></td>
+            <td th:text="${dish.name}"></td>
+            <td th:text="${dish.price}"></td>
+            <td th:text="${dish.description}"></td>
+            <td th:text="${dish.category.id}"></td>
+        </tr>
+        </tbody>
+    </table>
 </body>
