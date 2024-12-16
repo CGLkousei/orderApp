@@ -1,7 +1,6 @@
 package com.example.web01.Service;
 
 import com.example.web01.Entity.CategoryEntity;
-import com.example.web01.Entity.RestaurantEntity;
 import com.example.web01.Repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
