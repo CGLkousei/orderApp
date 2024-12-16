@@ -32,4 +32,12 @@ public class DishService {
     public void deleteDishById(Long id) {
         dishRepository.deleteById(id);  // deleteById() メソッドで削除
     }
+
+    public List<DishEntity> getDishesByCategoryId(Long categoryId){
+        return dishRepository.findByCategoryId(categoryId);
+    }
+
+    public List<DishEntity> getDishesByCategoriesId(List<Long> categoryIds){
+        return dishRepository.findByCategoryIdIn(categoryIds);
+    }
 }

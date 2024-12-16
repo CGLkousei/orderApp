@@ -32,4 +32,8 @@ public class SeatService {
     public void deleteSeatById(Long id) {
         seatRepository.deleteById(id);  // deleteById() メソッドで削除
     }
+
+    public Optional<SeatEntity> getSeatByIdAndRestaurantId(Long id, Long restaurant_id){
+        return seatRepository.findByIdAndRestaurantId(id, restaurant_id);
+    }
 }

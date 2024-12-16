@@ -5,9 +5,11 @@ import com.example.web01.Class.Token;
 import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
+import com.example.web01.Entity.SeatEntity;
 import com.example.web01.Service.CategoryService;
 import com.example.web01.Service.DishService;
 import com.example.web01.Service.RestaurantService;
+import com.example.web01.Service.SeatService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +26,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CustomerController {
@@ -34,9 +38,11 @@ public class CustomerController {
     private CategoryService categoryService;
     @Autowired
     private DishService dishService;
+    @Autowired
+    private SeatService seatService;
 
-    private static final int effectiveTime = 300;
-    private static final String cookieKey = "timeStamp";
+    private static final int effectiveDays = 3;
+    private static final String cookieKey = "Token";
 
     @GetMapping("/customer/launch")
     public String launchCustomer(){
@@ -62,8 +68,6 @@ public class CustomerController {
                 }
             }
         }
-
-
 
         return "order/orderHome";
     }
@@ -108,38 +112,59 @@ public class CustomerController {
 
         Cookie[] cookies = request.getCookies();
         boolean isFirstVisit = true;
-        long firstVisitTime = 0;
+        String cookieToken = null;
 
         if(cookies != null){
             for(Cookie cookie : cookies){
                 if(cookie.getName().equals(cookieKey + "_" + restaurantId + "_" + seatId)){
                     isFirstVisit = false;
-                    firstVisitTime = Long.parseLong(cookie.getValue());
+                    cookieToken = cookie.getValue();
                     break;
                 }
             }
         }
 
+        Optional<SeatEntity> seat = seatService.getSeatByIdAndRestaurantId(Long.parseLong(seatId), Long.parseLong(restaurantId));
+        String seatToken = seat.map(SeatEntity::getToken).orElse(null);
+        if(seatToken == null){
+            model.addAttribute("message", "The link may be incorrect. Please reread the QR code.");
+            return "order/errorPage";
+        }
+
         // 初回アクセスの場合、"firstVisitTime"クッキーを設定
         if (isFirstVisit) {
-            long currentTime = Instant.now().toEpochMilli(); // 現在の時間をタイムスタンプとして取得
-
-            ResponseCookie responseCookie = ResponseCookie.from(cookieKey + "_" + restaurantId + "_" + seatId, String.valueOf(currentTime))
+            ResponseCookie responseCookie = ResponseCookie.from(cookieKey + "_" + restaurantId + "_" + seatId, seatToken)
                     .httpOnly(true)
                     .secure(true)
-                    .maxAge(60 * 60 * 12)
+                    .maxAge(60 * 60 * 12 * effectiveDays)
                     .path("/")
                     .sameSite("Strict")
                     .build();
 
             response.addHeader("Set-Cookie", responseCookie.toString());
         }
+        else{
+            if(!cookieToken.equals(seatToken)){
+                model.addAttribute("message", "Your expiration date has expired. Thank you for visiting.");
+                return "order/errorPage";
+            }
+        }
 
-        List<RestaurantEntity> restaurants = restaurantService.getAllRestaurants();
-        List<CategoryEntity> categories = categoryService.getAllCategories();
-        List<DishEntity> dishes = dishService.getAllDishes();
+        Optional<RestaurantEntity> restaurant = restaurantService.getRestaurantById(Long.parseLong(restaurantId));
+        if(!restaurant.isPresent()){
+            model.addAttribute("message", "The link may be incorrect. Please reread the QR code.");
+            return "order/errorPage";
+        }
+        RestaurantEntity restaurantEntity = restaurant.get();
 
-        model.addAttribute("restaurants", restaurants);
+        List<CategoryEntity> categories = categoryService.getCategoriesByRestaurantId(Long.parseLong(restaurantId));
+        List<Long> categoryIds = new ArrayList<>();
+        for(int i = 0; i < categories.size(); i++){
+            categoryIds.add(categories.get(i).getId());
+        }
+        List<DishEntity> dishes = dishService.getDishesByCategoriesId(categoryIds);
+
+        model.addAttribute("restaurant", restaurantEntity);
         model.addAttribute("categories", categories);
         model.addAttribute("dishes", dishes);
 

@@ -8,7 +8,7 @@
 <body>
     <h2>注文画面</h2>
 
-    <p>restaurants</p>
+    <p>restaurant</p>
     <table border="1">
         <thead>
         <tr>
@@ -18,7 +18,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="restaurant : ${restaurants}">
+        <tr>
             <td th:text="${restaurant.id}"></td>
             <td th:text="${restaurant.name}"></td>
             <td th:text="${restaurant.email}"></td>

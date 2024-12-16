@@ -32,4 +32,8 @@ public class CategoryService {
     public void deleteCategoryById(Long id) {
         categoryRepository.deleteById(id);  // deleteById() メソッドで削除
     }
+
+    public List<CategoryEntity> getCategoriesByRestaurantId(Long restaurantId){
+        return categoryRepository.findByRestaurantId(restaurantId);
+    }
 }
