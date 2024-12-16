@@ -167,6 +167,7 @@ public class CustomerController {
         model.addAttribute("restaurant", restaurantEntity);
         model.addAttribute("categories", categories);
         model.addAttribute("dishes", dishes);
+        model.addAttribute("message", cookieToken + " : " + seatToken);
 
         return "order/orderHome";
     }
