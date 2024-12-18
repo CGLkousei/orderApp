@@ -11,7 +11,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class Customer {
-    private int seatId;
+    private long seatId;
     private int numOfPeople;
     private LocalDate registrationDate;
     private int totalMoney;
@@ -31,4 +31,5 @@ public class Customer {
     public Customer(){
         this(0, 0);
     }
+
 }

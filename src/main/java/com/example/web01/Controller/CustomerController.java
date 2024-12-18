@@ -1,7 +1,5 @@
-package com.example.web01;
+package com.example.web01.Controller;
 
-import com.example.web01.Class.Customer;
-import com.example.web01.Class.Token;
 import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
@@ -10,7 +8,6 @@ import com.example.web01.Service.CategoryService;
 import com.example.web01.Service.DishService;
 import com.example.web01.Service.RestaurantService;
 import com.example.web01.Service.SeatService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Instant;
@@ -31,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/order")
 public class CustomerController {
     @Autowired
     private RestaurantService restaurantService;
@@ -105,7 +104,13 @@ public class CustomerController {
 //            return ResponseEntity.status(500).body("Internal server error.");
 //        }
 //    }
-    @GetMapping("/order/launch")
+
+    /*
+        今後やること
+        Tokenを暗号化
+        QRコードにセッションIDを持たせる
+     */
+    @GetMapping("/home")
     public String displayOrderPage(@RequestParam String restaurantId, @RequestParam String seatId,
                                    HttpServletRequest request, HttpServletResponse response,
                                    Model model) {

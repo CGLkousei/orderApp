@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>finish order</title>
+</head>
+
+<body>
+    <h2>注文修了画面</h2>
+
+    <p>categories</p>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>名前</th>
+            <th>restaurant id</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.id}"></td>
+            <td th:text="${category.name}"></td>
+            <td th:text="${category.restaurant.id}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</body>

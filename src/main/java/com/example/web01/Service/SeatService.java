@@ -36,4 +36,8 @@ public class SeatService {
     public Optional<SeatEntity> getSeatByIdAndRestaurantId(Long id, Long restaurant_id){
         return seatRepository.findByIdAndRestaurantId(id, restaurant_id);
     }
+
+    public List<SeatEntity> getSeatsByRestaurantId(Long restaurantId){
+        return seatRepository.findByRestaurantId(restaurantId);
+    }
 }
