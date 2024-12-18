@@ -91,10 +91,15 @@ public class RestaurantController {
             model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
             return "restaurant/errorPage";
         }
-        System.out.println("SEAT NUM: " + restaurant.getSeatNum());
+
+        RestaurantEntity updatedRestaurant = restaurantService.updateRestaurant(restaurant);
+        if(updatedRestaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
 
         model.addAttribute("isEditMode", false);
-        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("restaurant", updatedRestaurant);
         return "restaurant/modifyInformation";
     }
 

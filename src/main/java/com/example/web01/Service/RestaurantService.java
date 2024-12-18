@@ -32,4 +32,20 @@ public class RestaurantService {
     public void deleteRestaurantById(Long id) {
         restaurantRepository.deleteById(id);  // deleteById() メソッドで削除
     }
+
+    public RestaurantEntity updateRestaurant(RestaurantEntity restaurant){
+        Optional<RestaurantEntity> exitsRestaurant = restaurantRepository.findById(restaurant.getId());
+
+        if(exitsRestaurant.isPresent()){
+            RestaurantEntity updatedRestaurant = exitsRestaurant.get();
+            updatedRestaurant.setName(restaurant.getName());
+            updatedRestaurant.setEmail(restaurant.getEmail());
+            updatedRestaurant.setSeatNum(restaurant.getSeatNum());
+
+            return restaurantRepository.save(updatedRestaurant);
+        }
+        else{
+            return null;
+        }
+    }
 }
