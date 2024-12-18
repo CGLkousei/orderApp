@@ -1,10 +1,32 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>modify Customer</title>
+    <title>Edit User</title>
 </head>
-
 <body>
-<p th:text="${message}"></p>
+    <h2><span th:text="${restaurant.name}"></span> 様</h2>
+    <div th:if="${!isEditMode}">
+        <p><strong>店舗名:</strong> <span th:text="${restaurant.name}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${restaurant.email}"></span></p>
+        <p><strong>席数:</strong> <span th:text="${restaurant.seatNum}"></span></p>
+        <a th:href="@{/restaurant/{id}/Edit/Info(id=${restaurant.id})}">Edit Info</a>
+    </div>
+
+    <div th:if="${isEditMode}">
+        <form th:action="@{/restaurant/{id}/Update/Info(id=${restaurant.id})}" method="post">
+            <input type="hidden" name="id" th:value="${restaurant.id}">
+            <label for="name">店舗名:</label>
+            <input type="text" id="name" name="name" th:value="${restaurant.name}" required>
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" th:value="${restaurant.email}" required>
+            <br>
+            <label for="seat">席数:</label>
+            <input type="seat" id="seat" name="seat" th:value="${restaurant.seatNum}" required>
+            <br>
+            <button type="submit">Save</button>
+        </form>
+        <a th:href="@{/restaurant/{id}/Confirm/Info(id=${restaurant.id})}">Cancel</a>
+    </div>
 </body>
+</html>

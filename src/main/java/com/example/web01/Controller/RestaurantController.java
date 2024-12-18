@@ -58,12 +58,59 @@ public class RestaurantController {
             return "restaurant/modifyDish";
         }
         else if("modifyInfo".equals(action)){
+            model.addAttribute("isEditMode", false);
             return "restaurant/modifyInformation";
         }
 
         model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
         return "restaurant/errorPage";
     }
+
+    @GetMapping("/{restaurantId}/Edit/Info")
+    public String editRestaurantInfo(@PathVariable Long restaurantId, Model model) {
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        model.addAttribute("isEditMode", true);
+        model.addAttribute("restaurant", restaurant);
+
+        return "restaurant/modifyInformation";
+    }
+
+    @PostMapping("/{restaurantId}/Update/Info")
+    public String updateRestaurantInfo(@PathVariable Long restaurantId, @ModelAttribute RestaurantEntity restaurant, Model model){
+        RestaurantEntity restaurant_query = getRestaurant(restaurantId);
+        if(restaurant_query == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+        if(restaurant_query.getId() != restaurant.getId()){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        model.addAttribute("isEditMode", false);
+        model.addAttribute("restaurant", restaurant);
+        return "restaurant/modifyInformation";
+    }
+
+    @GetMapping("/{restaurantId}/Confirm/Info")
+    public String confirmRestaurantInfo(@PathVariable Long restaurantId, Model model) {
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        model.addAttribute("isEditMode", false);
+        model.addAttribute("restaurant", restaurant);
+
+        return "restaurant/modifyInformation";
+    }
+
 
     public RestaurantEntity getRestaurant(long restaurant_id){
         Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(restaurant_id);
