@@ -1,9 +1,13 @@
 package com.example.web01.Entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "Category")
 public class CategoryEntity {
@@ -20,27 +24,4 @@ public class CategoryEntity {
     @OneToMany(mappedBy = "category")
     private List<DishEntity> dishes;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public RestaurantEntity getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(RestaurantEntity restaurant) {
-        this.restaurant = restaurant;
-    }
 }

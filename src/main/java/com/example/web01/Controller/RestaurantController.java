@@ -28,12 +28,11 @@ public class RestaurantController {
 
     @GetMapping("/{restaurantId}/home")
     public String addCustomerDisplay(@PathVariable Long restaurantId, Model model){
-        Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(restaurantId);
-        if(!restaurantEntity.isPresent()){
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
             model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
             return "restaurant/errorPage";
         }
-        RestaurantEntity restaurant = restaurantEntity.get();
 
         model.addAttribute("restaurant", restaurant);
 
@@ -42,6 +41,13 @@ public class RestaurantController {
 
     @PostMapping("/{restaurantId}/handleBtn")
     public String handleBtnFunc(@PathVariable Long restaurantId, @RequestParam("action") String action, Model model){
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        model.addAttribute("restaurant", restaurant);
         if("addCustomer".equals(action)){
             return "restaurant/newCustomer";
         }
@@ -51,8 +57,21 @@ public class RestaurantController {
         else if("modifyDish".equals(action)){
             return "restaurant/modifyDish";
         }
+        else if("modifyInfo".equals(action)){
+            return "restaurant/modifyInformation";
+        }
 
         model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
         return "restaurant/errorPage";
+    }
+
+    public RestaurantEntity getRestaurant(long restaurant_id){
+        Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(restaurant_id);
+        if(!restaurantEntity.isPresent()){
+            return null;
+        }
+
+        RestaurantEntity restaurant = restaurantEntity.get();
+        return restaurant;
     }
 }
