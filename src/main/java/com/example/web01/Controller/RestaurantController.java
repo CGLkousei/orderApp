@@ -1,6 +1,8 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
+import com.example.web01.Entity.CategoryEntity;
+import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
 import com.example.web01.Entity.SeatEntity;
 import com.example.web01.Service.*;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +58,9 @@ public class RestaurantController {
             return "restaurant/checkCustomer";
         }
         else if("modifyDish".equals(action)){
+            List<CategoryEntity> categories = restaurant.getCategories();
+            model.addAttribute("categories", categories);
+            model.addAttribute("isEditMode", false);
             return "restaurant/modifyDish";
         }
         else if("modifyInfo".equals(action)){
@@ -64,6 +70,35 @@ public class RestaurantController {
 
         model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
         return "restaurant/errorPage";
+    }
+
+    @GetMapping("/{restaurantId}/Confirm/Dishes")
+    public String showCategories(@PathVariable Long restaurantId, @RequestParam(required = false) String selectedCategoryId, Model model) {
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        long categoryId = Long.parseLong(selectedCategoryId);
+        List<CategoryEntity> categories = restaurant.getCategories();
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("categories", categories);
+        model.addAttribute("selectedCategory", getCategory(categoryId, categories));
+
+        // 選択されたカテゴリに応じた料理を取得
+        if (selectedCategoryId != null) {
+            List<DishEntity> dishes = dishService.getDishesByCategoryId(Long.parseLong(selectedCategoryId));
+
+            model.addAttribute("selectedCategoryId", selectedCategoryId);
+            model.addAttribute("dishes", dishes);
+        } else {
+            model.addAttribute("selectedCategoryId", null);
+            model.addAttribute("dishes", List.of());
+        }
+
+        return "/restaurant/modifyDish";
     }
 
     @GetMapping("/{restaurantId}/Edit/Info")
@@ -117,14 +152,21 @@ public class RestaurantController {
         return "restaurant/modifyInformation";
     }
 
-
     public RestaurantEntity getRestaurant(long restaurant_id){
         Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(restaurant_id);
         if(!restaurantEntity.isPresent()){
             return null;
         }
 
-        RestaurantEntity restaurant = restaurantEntity.get();
-        return restaurant;
+        return restaurantEntity.get();
+    }
+
+    public CategoryEntity getCategory(long category_id, List<CategoryEntity> categories){
+        for(CategoryEntity c : categories){
+            if(c.getId() == category_id)
+                return c;
+        }
+
+        return null;
     }
 }

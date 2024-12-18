@@ -3,8 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>modify Customer</title>
+    <script src="/js/dishForm.js" defer></script>
 </head>
 
 <body>
-<p th:text="${message}"></p>
+    <h2><span th:text="${restaurant.name}"></span> 様</h2>
+
+    <form>
+        <label th:each="category, iterStat : ${categories}">
+            <input type="radio" name="category" th:value="${category.id}" th:checked="${iterStat.index == 0}">
+            <span th:text="${category.name}"></span>
+        </label>
+    </form>
+
+    <div id="selectedCategory">
+        <h3><span id="selectedCategoryName" th:text="${categories[0].name}"></span></h3>
+    </div>
+
+    <div th:each="category : ${categories}">
+        <div th:id="'category-' + ${category.id}" class="content" style="display: none;">
+            <table>
+                <thead>
+                <tr>
+                    <th>料理名</th>
+                    <th>価格</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="dish-row" th:each="dish, iterStat : ${category.dishes}">
+                    <td><input type="text" th:name="'category.dishes[' + ${iterStat.index} + '].name'" th:value="${dish.name}" placeholder="料理名" required></td>
+                    <td><input type="number" th:name="'category.dishes[' + ${iterStat.index} + '].price'" th:value="${dish.price}" placeholder="価格" required></td>
+                    <td><button type="button" class="removeDish">削除</button></td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="button" class="addDish">料理を追加</button>
+        </div>
+    </div>
+
 </body>
