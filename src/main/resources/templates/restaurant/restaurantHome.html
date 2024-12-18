@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>customer home</title>
+</head>
+
+<body>
+    <h2><span th:text="${restaurant.name}"></span> 様</h2>
+    <form th:action="@{/restaurant/{id}/handleBtn(id=${restaurant.id})}" method="post">
+        <button type="submit" name="action" value="addCustomer">新規客の追加</button>
+        <button type="submit" name="action" value="popCustomer">客の会計</button>
+        <button type="submit" name="action" value="modifyDish">メニューの修正</button>
+    </form>
+</body>

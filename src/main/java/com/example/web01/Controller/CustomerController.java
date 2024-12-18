@@ -155,12 +155,12 @@ public class CustomerController {
             }
         }
 
-        Optional<RestaurantEntity> restaurant = restaurantService.getRestaurantById(Long.parseLong(restaurantId));
-        if(!restaurant.isPresent()){
+        Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(Long.parseLong(restaurantId));
+        if(!restaurantEntity.isPresent()){
             model.addAttribute("message", "The link may be incorrect. Please reread the QR code.");
             return "order/errorPage";
         }
-        RestaurantEntity restaurantEntity = restaurant.get();
+        RestaurantEntity restaurant = restaurantEntity.get();
 
         List<CategoryEntity> categories = categoryService.getCategoriesByRestaurantId(Long.parseLong(restaurantId));
         List<Long> categoryIds = new ArrayList<>();
@@ -169,7 +169,7 @@ public class CustomerController {
         }
         List<DishEntity> dishes = dishService.getDishesByCategoriesId(categoryIds);
 
-        model.addAttribute("restaurant", restaurantEntity);
+        model.addAttribute("restaurant", restaurant);
         model.addAttribute("categories", categories);
         model.addAttribute("dishes", dishes);
         model.addAttribute("message", cookieToken + " : " + seatToken);

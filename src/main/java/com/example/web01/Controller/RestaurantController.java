@@ -1,19 +1,16 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
+import com.example.web01.Entity.RestaurantEntity;
 import com.example.web01.Entity.SeatEntity;
-import com.example.web01.Service.CategoryService;
-import com.example.web01.Service.DishService;
-import com.example.web01.Service.RestaurantService;
-import com.example.web01.Service.SeatService;
+import com.example.web01.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/restaurant")
@@ -26,17 +23,36 @@ public class RestaurantController {
     private DishService dishService;
     @Autowired
     private SeatService seatService;
+    @Autowired
+    private CustomerService customerService;
 
-    List<Customer> customers;
+    @GetMapping("/{restaurantId}/home")
+    public String addCustomerDisplay(@PathVariable Long restaurantId, Model model){
+        Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(restaurantId);
+        if(!restaurantEntity.isPresent()){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+        RestaurantEntity restaurant = restaurantEntity.get();
 
-    @GetMapping("/{id}/bill")
-    public String launchCustomer(@PathVariable Long id, Model model){
-        List<SeatEntity> seats = seatService.getSeatsByRestaurantId(id);
-        Customer c = new Customer(1, 1);
-        c.setTotalMoney(c.getTotalMoney() + 100);
-        this.customers.add(c);
-        model.addAttribute("customers", customers);
+        model.addAttribute("restaurant", restaurant);
 
-        return "restaurant/finishOrder";
+        return "restaurant/restaurantHome";
+    }
+
+    @PostMapping("/{restaurantId}/handleBtn")
+    public String handleBtnFunc(@PathVariable Long restaurantId, @RequestParam("action") String action, Model model){
+        if("addCustomer".equals(action)){
+            return "restaurant/newCustomer";
+        }
+        else if("popCustomer".equals(action)){
+            return "restaurant/checkCustomer";
+        }
+        else if("modifyDish".equals(action)){
+            return "restaurant/modifyDish";
+        }
+
+        model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+        return "restaurant/errorPage";
     }
 }
