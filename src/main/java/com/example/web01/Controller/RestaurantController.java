@@ -73,7 +73,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/{restaurantId}/Confirm/Dishes")
-    public String showCategories(@PathVariable Long restaurantId, @RequestParam(required = false) String selectedCategoryId, Model model) {
+    public String confirmDish(@PathVariable Long restaurantId, @RequestParam(required = false) String selectedCategoryId, Model model) {
         RestaurantEntity restaurant = getRestaurant(restaurantId);
         if(restaurant == null){
             model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
@@ -98,6 +98,24 @@ public class RestaurantController {
             model.addAttribute("dishes", List.of());
         }
 
+        return "/restaurant/modifyDish";
+    }
+
+    @PostMapping("/{restaurantId}/Update/Dishes")
+    public String updateDish(@PathVariable Long restaurantId, @ModelAttribute("categories") List<CategoryEntity> categories, Model model) {
+        System.out.println("Categories size: " + categories.size());
+        for(CategoryEntity c : categories){
+            System.out.println("Category.id: " + c.getId());
+            System.out.println("Category.name: " + c.getName());
+            System.out.println("Category.restaurantId: " + c.getRestaurant().getId());
+            for(DishEntity d : c.getDishes()){
+                System.out.println("Dish.id: " + d.getId());
+                System.out.println("Dish.name: " + d.getName());
+                System.out.println("Dish.price: " + d.getPrice());
+                System.out.println("Dish.describe: " + d.getDescription());
+                System.out.println("Dish.category: " + d.getCategory().getId());
+            }
+        }
         return "/restaurant/modifyDish";
     }
 
