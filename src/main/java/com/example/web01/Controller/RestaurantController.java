@@ -79,35 +79,6 @@ public class RestaurantController {
         return "restaurant/errorPage";
     }
 
-    @GetMapping("/{restaurantId}/Confirm/Dishes")
-    public String confirmDish(@PathVariable Long restaurantId, @RequestParam(required = false) String selectedCategoryId, Model model) {
-        RestaurantEntity restaurant = getRestaurant(restaurantId);
-        if(restaurant == null){
-            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
-            return "restaurant/errorPage";
-        }
-
-        long categoryId = Long.parseLong(selectedCategoryId);
-        List<CategoryEntity> categories = restaurant.getCategories();
-
-        model.addAttribute("restaurant", restaurant);
-        model.addAttribute("categories", categories);
-        model.addAttribute("selectedCategory", getCategory(categoryId, categories));
-
-        // 選択されたカテゴリに応じた料理を取得
-        if (selectedCategoryId != null) {
-            List<DishEntity> dishes = dishService.getDishesByCategoryId(Long.parseLong(selectedCategoryId));
-
-            model.addAttribute("selectedCategoryId", selectedCategoryId);
-            model.addAttribute("dishes", dishes);
-        } else {
-            model.addAttribute("selectedCategoryId", null);
-            model.addAttribute("dishes", List.of());
-        }
-
-        return "/restaurant/modifyDish";
-    }
-
     @Transactional
     @PostMapping("/{restaurantId}/Update/Dishes")
     public String updateDish(@PathVariable Long restaurantId, @ModelAttribute("paramDishes")@Validated ParamDishes pd, BindingResult bindingResult, Model model) {
@@ -128,18 +99,6 @@ public class RestaurantController {
         }
 
         List<CategoryEntity> newCategories = pd.getCategories();
-//        for(CategoryEntity category : newCategories){
-//            System.out.println("Category.id: " + category.getId());
-//            System.out.println("Category.name: " + category.getName());
-//            System.out.println("Category.Restaurant.id: " + category.getRestaurant().getId());
-//            for(DishEntity dish : category.getDishes()){
-//                System.out.println("Dish.id: " + dish.getId());
-//                System.out.println("Dish.name: " + dish.getName());
-//                System.out.println("Dish.price: " + dish.getPrice());
-//                System.out.println("Dish.description: " + dish.getDescription());
-//                System.out.println("Dish.Category.id: " + dish.getCategory().getId());
-//            }
-//        }
         for(CategoryEntity category : newCategories){
             CategoryEntity addCategory = null;
             if(category.getRestaurant().getId() == null){
@@ -178,9 +137,10 @@ public class RestaurantController {
                 categoryService.deleteCategoryById(delete_category.getId());
             }
         }
-        model.addAttribute("categories", newCategories);
 
-        return "/restaurant/sample";
+        model.addAttribute("message", "Update Successful.");
+
+        return "/restaurant/restaurantHome";
     }
 
     @GetMapping("/{restaurantId}/Edit/Info")
@@ -215,9 +175,9 @@ public class RestaurantController {
             return "restaurant/errorPage";
         }
 
-        model.addAttribute("isEditMode", false);
-        model.addAttribute("restaurant", updatedRestaurant);
-        return "restaurant/modifyInformation";
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("message", "Update Successful.");
+        return "restaurant/restaurantHome";
     }
 
     @GetMapping("/{restaurantId}/Confirm/Info")

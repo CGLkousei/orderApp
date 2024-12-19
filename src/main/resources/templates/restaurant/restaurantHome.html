@@ -6,6 +6,7 @@
 </head>
 
 <body>
+    <p th:text="${message}"></p>
     <h2><span th:text="${restaurant.name}"></span> 様</h2>
     <form th:action="@{/restaurant/{id}/handleBtn(id=${restaurant.id})}" method="post">
         <button type="submit" name="action" value="addCustomer">新規客の追加</button>

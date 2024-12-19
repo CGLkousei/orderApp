@@ -24,9 +24,11 @@
             <label for="seatNum">席数:</label>
             <input type="number" id="seatNum" name="seatNum" th:value="${restaurant.seatNum}" required>
             <br>
-            <button type="submit">Save</button>
+            <button type="submit">保存</button>
         </form>
         <a th:href="@{/restaurant/{id}/Confirm/Info(id=${restaurant.id})}">Cancel</a>
     </div>
+
+    <a th:href="@{/restaurant/{id}/home(id=${restaurant.id})}">Homeに戻る</a>
 </body>
 </html>
