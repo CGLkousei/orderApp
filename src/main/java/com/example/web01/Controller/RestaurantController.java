@@ -8,6 +8,7 @@ import com.example.web01.Entity.RestaurantEntity;
 import com.example.web01.Entity.SeatEntity;
 import com.example.web01.Service.*;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -107,6 +108,7 @@ public class RestaurantController {
         return "/restaurant/modifyDish";
     }
 
+    @Transactional
     @PostMapping("/{restaurantId}/Update/Dishes")
     public String updateDish(@PathVariable Long restaurantId, @ModelAttribute("paramDishes")@Validated ParamDishes pd, BindingResult bindingResult, Model model) {
         RestaurantEntity restaurant = getRestaurant(restaurantId);
@@ -126,25 +128,54 @@ public class RestaurantController {
         }
 
         List<CategoryEntity> newCategories = pd.getCategories();
+//        for(CategoryEntity category : newCategories){
+//            System.out.println("Category.id: " + category.getId());
+//            System.out.println("Category.name: " + category.getName());
+//            System.out.println("Category.Restaurant.id: " + category.getRestaurant().getId());
+//            for(DishEntity dish : category.getDishes()){
+//                System.out.println("Dish.id: " + dish.getId());
+//                System.out.println("Dish.name: " + dish.getName());
+//                System.out.println("Dish.price: " + dish.getPrice());
+//                System.out.println("Dish.description: " + dish.getDescription());
+//                System.out.println("Dish.Category.id: " + dish.getCategory().getId());
+//            }
+//        }
         for(CategoryEntity category : newCategories){
-            if(category.getId() == null){
+            CategoryEntity addCategory = null;
+            if(category.getRestaurant().getId() == null){
                 category.setRestaurant(restaurant);
-                categoryService.saveCategory(category);
+                category.setId(null);
+                addCategory = categoryService.saveCategory(category);
             }
 
             for(DishEntity dish : category.getDishes()){
                 if(dish.getId() == null){
-                    dish.setCategory(category);
-                    System.out.println("Dish: " + dish.getName());
-                    dishService.saveDish(dish);
+                    if(addCategory != null){
+                        dish.setCategory(addCategory);
+                    }
+                    else{
+                        dish.setCategory(category);
+                    }
                 }
+
+                dishService.saveDish(dish);
             }
 
             List<DishEntity> existDishes = dishService.getDishesByCategoryId(category.getId());
             for(DishEntity dish : existDishes){
-                if(!isExistList(category.getDishes(), dish.getId())){
+                if(!isExistDishesList(category.getDishes(), dish.getId())){
                     dishService.deleteDishById(dish.getId());
                 }
+            }
+        }
+
+        List<CategoryEntity> existCategories = categoryService.getCategoriesByRestaurantId(restaurantId);
+        for(CategoryEntity delete_category : existCategories){
+            if(!isExistCategoriesList(newCategories, delete_category.getId())){
+                for(DishEntity delete_dish : delete_category.getDishes()){
+                    dishService.deleteDishById(delete_dish.getId());
+                }
+                categoryService.deleteCategoryById(delete_category.getId());
             }
         }
         model.addAttribute("categories", newCategories);
@@ -221,9 +252,19 @@ public class RestaurantController {
         return null;
     }
 
-    public boolean isExistList(List<DishEntity> dishes, long id){
+    public boolean isExistDishesList(List<DishEntity> dishes, long id){
         for(DishEntity dish : dishes){
             if(dish.getId() == id){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isExistCategoriesList(List<CategoryEntity> categories, long id){
+        for(CategoryEntity category : categories){
+            if(category.getId() == id){
                 return true;
             }
         }
