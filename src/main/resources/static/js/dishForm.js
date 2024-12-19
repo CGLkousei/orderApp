@@ -14,44 +14,55 @@ document.addEventListener('click', function (e) {
 
 document.addEventListener('click', function (e) {
     if (e.target && e.target.classList.contains('addDish')) {
-        // 該当カテゴリの `tbody` を取得
-        const tableBody = e.target.closest('.content').querySelector('tbody');
-        if (tableBody) {
-            // 現在の行数を取得（新しいインデックスを計算）
-            const rowCount = tableBody.querySelectorAll('.dish-row').length;
+        const contentDiv = e.target.closest('.content');
+        if(contentDiv){
+            const idValue = contentDiv.getAttribute('id');
+            const categoryId = idValue.replace('category-', '') - 1;
 
-            // 新しい行を作成
-            const newRow = document.createElement('tr');
-            newRow.classList.add('dish-row');
-            newRow.innerHTML = `
-                <td>
-                    <input
-                        type="text"
-                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].name"
-                        placeholder="料理名"
-                        required>
-                </td>
-                <td>
-                    <input
-                        type="number"
-                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].price"
-                        placeholder="価格"
-                        required>
-                </td>
-                <td>
-                    <input
-                        type="text"
-                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].describe"
-                        placeholder="説明"
-                        required>
-                </td>
-                <td>
-                    <button type="button" class="removeDish">削除</button>
-                </td>
-            `;
+            // 該当カテゴリの `tbody` を取得
+            const tableBody = contentDiv.querySelector('tbody');
+            if (tableBody) {
+                // 現在の行数を取得（新しいインデックスを計算）
+                const rowCount = tableBody.querySelectorAll('.dish-row').length;
 
-            // 新しい行をテーブルに追加
-            tableBody.appendChild(newRow);
+                // 新しい行を作成
+                const newRow = document.createElement('tr');
+                newRow.classList.add('dish-row');
+                newRow.innerHTML = `
+                    <input
+                        type="hidden"
+                        name="categories[${categoryId}].dishes[${rowCount}].category.id"
+                        value="${categoryId + 1}"
+                    >
+                    <td>
+                        <input
+                            type="text"
+                            name="categories[${categoryId}].dishes[${rowCount}].name"
+                            placeholder="料理名"
+                            required>
+                    </td>
+                    <td>
+                        <input
+                            type="number"
+                            name="categories[${categoryId}].dishes[${rowCount}].price"
+                            placeholder="価格"
+                            required>
+                    </td>
+                    <td>
+                        <input
+                            type="text"
+                            name="categories[${categoryId}].dishes[${rowCount}].describe"
+                            placeholder="説明"
+                            >
+                    </td>
+                    <td>
+                        <button type="button" class="removeDish">削除</button>
+                    </td>
+                `;
+
+                // 新しい行をテーブルに追加
+                tableBody.appendChild(newRow);
+            }
         }
     }
 });

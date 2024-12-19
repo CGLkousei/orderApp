@@ -11,6 +11,7 @@
         <p>カテゴリid: <span th:text="${category.id}"></span></p>
         <p>カテゴリ名: <span th:text="${category.name}"></span></p>
         <p>レストランid: <span th:text="${category.restaurant.id}"></span></p>
+        <p>レストランname: <span th:text="${category.restaurant.name}"></span></p>
         <table>
             <thead>
             <tr>
@@ -19,6 +20,7 @@
                 <th>価格</th>
                 <th>説明</th>
                 <th>カテゴリid</th>
+                <th>カテゴリ名</th>
             </tr>
             </thead>
             <tbody>
@@ -28,6 +30,7 @@
                 <td th:text="${dish.price}"></td>
                 <td th:text="${dish.description}"></td>
                 <td th:text="${dish.category.id}"></td>
+                <td th:text="${dish.category.name}"></td>
             </tr>
             </tbody>
         </table>
