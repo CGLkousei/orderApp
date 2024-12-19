@@ -58,8 +58,8 @@ public class RestaurantController {
             return "restaurant/checkCustomer";
         }
         else if("modifyDish".equals(action)){
-            List<CategoryEntity> categories = restaurant.getCategories();
-            model.addAttribute("categories", categories);
+//            List<CategoryEntity> categories = restaurant.getCategories();
+//            model.addAttribute("categories", categories);
             model.addAttribute("isEditMode", false);
             return "restaurant/modifyDish";
         }
@@ -102,7 +102,9 @@ public class RestaurantController {
     }
 
     @PostMapping("/{restaurantId}/Update/Dishes")
-    public String updateDish(@PathVariable Long restaurantId, @ModelAttribute("categories") List<CategoryEntity> categories, Model model) {
+    public String updateDish(@PathVariable Long restaurantId, @ModelAttribute RestaurantEntity restaurant, Model model) {
+        List<CategoryEntity> categories = restaurant.getCategories();
+
         System.out.println("Categories size: " + categories.size());
         for(CategoryEntity c : categories){
             System.out.println("Category.id: " + c.getId());

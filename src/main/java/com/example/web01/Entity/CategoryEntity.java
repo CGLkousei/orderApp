@@ -1,6 +1,7 @@
 package com.example.web01.Entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Data
 @Entity
 @Table(name = "Category")
 public class CategoryEntity {
