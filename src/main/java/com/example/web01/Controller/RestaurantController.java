@@ -125,8 +125,29 @@ public class RestaurantController {
             return "restaurant/modifyDish";
         }
 
-        List<CategoryEntity> categories = pd.getCategories();
-        model.addAttribute("categories", categories);
+        List<CategoryEntity> newCategories = pd.getCategories();
+        for(CategoryEntity category : newCategories){
+            if(category.getId() == null){
+                category.setRestaurant(restaurant);
+                categoryService.saveCategory(category);
+            }
+
+            for(DishEntity dish : category.getDishes()){
+                if(dish.getId() == null){
+                    dish.setCategory(category);
+                    System.out.println("Dish: " + dish.getName());
+                    dishService.saveDish(dish);
+                }
+            }
+
+            List<DishEntity> existDishes = dishService.getDishesByCategoryId(category.getId());
+            for(DishEntity dish : existDishes){
+                if(!isExistList(category.getDishes(), dish.getId())){
+                    dishService.deleteDishById(dish.getId());
+                }
+            }
+        }
+        model.addAttribute("categories", newCategories);
 
         return "/restaurant/sample";
     }
@@ -198,5 +219,15 @@ public class RestaurantController {
         }
 
         return null;
+    }
+
+    public boolean isExistList(List<DishEntity> dishes, long id){
+        for(DishEntity dish : dishes){
+            if(dish.getId() == id){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
