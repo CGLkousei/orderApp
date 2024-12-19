@@ -1,6 +1,7 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
+import com.example.web01.Data.ParamDishes;
 import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
@@ -58,8 +59,11 @@ public class RestaurantController {
             return "restaurant/checkCustomer";
         }
         else if("modifyDish".equals(action)){
-//            List<CategoryEntity> categories = restaurant.getCategories();
-//            model.addAttribute("categories", categories);
+            ParamDishes pd = new ParamDishes();
+            pd.setCategories(restaurant.getCategories());
+//           List<CategoryEntity> categories = restaurant.getCategories();
+           model.addAttribute("paramDishes", pd);
+//           model.addAttribute("categories", categories);
             model.addAttribute("isEditMode", false);
             return "restaurant/modifyDish";
         }
@@ -102,23 +106,18 @@ public class RestaurantController {
     }
 
     @PostMapping("/{restaurantId}/Update/Dishes")
-    public String updateDish(@PathVariable Long restaurantId, @ModelAttribute RestaurantEntity restaurant, Model model) {
-        List<CategoryEntity> categories = restaurant.getCategories();
-
-        System.out.println("Categories size: " + categories.size());
-        for(CategoryEntity c : categories){
-            System.out.println("Category.id: " + c.getId());
-            System.out.println("Category.name: " + c.getName());
-            System.out.println("Category.restaurantId: " + c.getRestaurant().getId());
-            for(DishEntity d : c.getDishes()){
-                System.out.println("Dish.id: " + d.getId());
-                System.out.println("Dish.name: " + d.getName());
-                System.out.println("Dish.price: " + d.getPrice());
-                System.out.println("Dish.describe: " + d.getDescription());
-                System.out.println("Dish.category: " + d.getCategory().getId());
-            }
+    public String updateDish(@PathVariable Long restaurantId, @ModelAttribute("paramDishes") ParamDishes pd, Model model) {
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
         }
-        return "/restaurant/modifyDish";
+
+        List<CategoryEntity> categories = pd.getCategories();
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("categories", categories);
+
+        return "/restaurant/sample";
     }
 
     @GetMapping("/{restaurantId}/Edit/Info")

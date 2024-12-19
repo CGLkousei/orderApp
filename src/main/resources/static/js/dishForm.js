@@ -1,60 +1,60 @@
-//document.addEventListener('click', function (e) {
-//    if (e.target && e.target.classList.contains('removeDish')) {
-//        const row = e.target.closest('tr');
-//        if (row) row.remove();
-//    }
-//
-//    if (e.target && e.target.type === 'submit') {
-//            const form = e.target.closest('form');
-//            if (form) {
-//                form.submit();  // 明示的にフォームを送信
-//            }
-//    }
-//});
-//
-//document.addEventListener('click', function (e) {
-//    if (e.target && e.target.classList.contains('addDish')) {
-//        // 該当カテゴリの `tbody` を取得
-//        const tableBody = e.target.closest('.content').querySelector('tbody');
-//        if (tableBody) {
-//            // 現在の行数を取得（新しいインデックスを計算）
-//            const rowCount = tableBody.querySelectorAll('.dish-row').length;
-//
-//            // 新しい行を作成
-//            const newRow = document.createElement('tr');
-//            newRow.classList.add('dish-row');
-//            newRow.innerHTML = `
-//                <td>
-//                    <input
-//                        type="text"
-//                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].name"
-//                        placeholder="料理名"
-//                        required>
-//                </td>
-//                <td>
-//                    <input
-//                        type="number"
-//                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].price"
-//                        placeholder="価格"
-//                        required>
-//                </td>
-//                <td>
-//                    <input
-//                        type="text"
-//                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].describe"
-//                        placeholder="説明"
-//                        required>
-//                </td>
-//                <td>
-//                    <button type="button" class="removeDish">削除</button>
-//                </td>
-//            `;
-//
-//            // 新しい行をテーブルに追加
-//            tableBody.appendChild(newRow);
-//        }
-//    }
-//});
+document.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('removeDish')) {
+        const row = e.target.closest('tr');
+        if (row) row.remove();
+    }
+
+    if (e.target && e.target.type === 'submit') {
+            const form = e.target.closest('form');
+            if (form) {
+                form.submit();  // 明示的にフォームを送信
+            }
+    }
+});
+
+document.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('addDish')) {
+        // 該当カテゴリの `tbody` を取得
+        const tableBody = e.target.closest('.content').querySelector('tbody');
+        if (tableBody) {
+            // 現在の行数を取得（新しいインデックスを計算）
+            const rowCount = tableBody.querySelectorAll('.dish-row').length;
+
+            // 新しい行を作成
+            const newRow = document.createElement('tr');
+            newRow.classList.add('dish-row');
+            newRow.innerHTML = `
+                <td>
+                    <input
+                        type="text"
+                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].name"
+                        placeholder="料理名"
+                        required>
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].price"
+                        placeholder="価格"
+                        required>
+                </td>
+                <td>
+                    <input
+                        type="text"
+                        name="categories[${e.target.dataset.categoryIndex}].dishes[${rowCount}].describe"
+                        placeholder="説明"
+                        required>
+                </td>
+                <td>
+                    <button type="button" class="removeDish">削除</button>
+                </td>
+            `;
+
+            // 新しい行をテーブルに追加
+            tableBody.appendChild(newRow);
+        }
+    }
+});
 
 
 document.addEventListener("DOMContentLoaded", function () {

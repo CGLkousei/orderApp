@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,4 +27,18 @@ public class CategoryEntity {
     @OneToMany(mappedBy = "category")
     private List<DishEntity> dishes;
 
+    public CategoryEntity(Long id, String name, RestaurantEntity restaurant, List<DishEntity> dishes) {
+        this.id = id;
+        this.name = name;
+        this.restaurant = restaurant;
+        this.dishes = dishes;
+    }
+
+    public CategoryEntity(String name) {
+        this(-1L, name, new RestaurantEntity(), new ArrayList<>());
+    }
+
+    public CategoryEntity() {
+        this(-1L, "", new RestaurantEntity(), new ArrayList<>());
+    }
 }

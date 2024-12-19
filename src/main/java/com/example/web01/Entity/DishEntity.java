@@ -23,4 +23,19 @@ public class DishEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
+    public DishEntity(Long id, String name, int price, String description, CategoryEntity category) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.category = category;
+    }
+
+    public DishEntity(String name, int price, String description) {
+        this(-1L, name, price, description, new CategoryEntity());
+    }
+
+    public DishEntity() {
+        this(-1L, "", 0, "", new CategoryEntity());
+    }
 }

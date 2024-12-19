@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Dishes</title>
+</head>
+
+<body>
+    <h2><span th:text="${restaurant.name}"></span> 様</h2>
+    <div th:each="category, iterStat1 : ${categories}">
+        <p>カテゴリid: <span th:text="${category.id}"></span></p>
+        <p>カテゴリ名: <span th:text="${category.name}"></span></p>
+        <p>レストランid: <span th:text="${category.restaurant.id}"></span></p>
+        <table>
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>料理名</th>
+                <th>価格</th>
+                <th>説明</th>
+                <th>カテゴリid</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dish : ${category.dishes}">
+                <td th:text="${dish.id}"></td>
+                <td th:text="${dish.name}"></td>
+                <td th:text="${dish.price}"></td>
+                <td th:text="${dish.description}"></td>
+                <td th:text="${dish.category.id}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
