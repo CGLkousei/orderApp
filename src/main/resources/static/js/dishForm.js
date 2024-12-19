@@ -51,7 +51,7 @@ document.addEventListener('click', function (e) {
                     <td>
                         <input
                             type="text"
-                            name="categories[${categoryId}].dishes[${rowCount}].describe"
+                            name="categories[${categoryId}].dishes[${rowCount}].description"
                             placeholder="説明"
                             >
                     </td>

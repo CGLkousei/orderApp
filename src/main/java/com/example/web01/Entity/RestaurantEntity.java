@@ -1,6 +1,9 @@
 package com.example.web01.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +21,14 @@ public class RestaurantEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "店名は必須です")
+    @Size(min = 1, max = 200, message = "店名は1文字以上、200文字以内にしてください")
     private String name;
+
     private String email;
+
+    @NotNull(message = "席数は必須です")
+    @Min(value = 0, message = "席数は0以上にしてください")
     private Long seatNum;
 
     @OneToMany(mappedBy = "restaurant")
@@ -34,10 +43,10 @@ public class RestaurantEntity {
     }
 
     public RestaurantEntity(String name, String email, Long seatNum) {
-        this(-1L, name, email, seatNum, new ArrayList<>());
+        this(null, name, email, seatNum, new ArrayList<>());
     }
 
     public RestaurantEntity() {
-        this(-1L, "", "", 0L, new ArrayList<>());
+        this(null, "", "", 0L, new ArrayList<>());
     }
 }

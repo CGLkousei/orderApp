@@ -7,12 +7,15 @@ import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
 import com.example.web01.Entity.SeatEntity;
 import com.example.web01.Service.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +67,6 @@ public class RestaurantController {
 //           List<CategoryEntity> categories = restaurant.getCategories();
            model.addAttribute("paramDishes", pd);
 //           model.addAttribute("categories", categories);
-            model.addAttribute("isEditMode", false);
             return "restaurant/modifyDish";
         }
         else if("modifyInfo".equals(action)){
@@ -106,15 +108,24 @@ public class RestaurantController {
     }
 
     @PostMapping("/{restaurantId}/Update/Dishes")
-    public String updateDish(@PathVariable Long restaurantId, @ModelAttribute("paramDishes") ParamDishes pd, Model model) {
+    public String updateDish(@PathVariable Long restaurantId, @ModelAttribute("paramDishes")@Validated ParamDishes pd, BindingResult bindingResult, Model model) {
         RestaurantEntity restaurant = getRestaurant(restaurantId);
         if(restaurant == null){
             model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
             return "restaurant/errorPage";
         }
+        model.addAttribute("restaurant", restaurant);
+
+        if(bindingResult.hasErrors()){
+            model.addAttribute("paramDishes", pd);
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                System.out.println("エラー発生フィールド: " + fieldError.getField());
+                System.out.println("エラーメッセージ: " + fieldError.getDefaultMessage());
+            }
+            return "restaurant/modifyDish";
+        }
 
         List<CategoryEntity> categories = pd.getCategories();
-        model.addAttribute("restaurant", restaurant);
         model.addAttribute("categories", categories);
 
         return "/restaurant/sample";

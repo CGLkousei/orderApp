@@ -46,8 +46,12 @@
 
                         <input type="hidden" th:name="'categories[' + ${iterStat1.index} + '].dishes[' + ${iterStat2.index} + '].id'" th:value="${dish.id}">
                         <input type="hidden" th:name="'categories[' + ${iterStat1.index} + '].dishes[' + ${iterStat2.index} + '].category.id'" th:value="${dish.category.id}">
-                        <td><input type="text" th:name="'categories[' + ${iterStat1.index} + '].dishes[' + ${iterStat2.index} + '].name'" th:value="${dish.name}" placeholder="料理名" required></td>
-                        <td><input type="number" th:name="'categories[' + ${iterStat1.index} + '].dishes[' + ${iterStat2.index} + '].price'" th:value="${dish.price}" placeholder="価格" required></td>
+                        <td>
+                            <input type="text" th:name="'categories[' + ${iterStat1.index} + '].dishes[' + ${iterStat2.index} + '].name'" th:value="${dish.name}" placeholder="料理名" required><br>
+                        </td>
+                        <td>
+                            <input type="number" th:name="'categories[' + ${iterStat1.index} + '].dishes[' + ${iterStat2.index} + '].price'" th:value="${dish.price}" placeholder="価格" required><br>
+                        </td>
                         <td><input type="text" th:name="'categories[' + ${iterStat1.index} + '].dishes[' + ${iterStat2.index} + '].description'" th:value="${dish.description}" placeholder="説明"></td>
                         <td><button type="button" class="removeDish">削除</button></td>
                     </tr>
