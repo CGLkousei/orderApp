@@ -10,7 +10,7 @@ import java.util.*;
 
 @Service
 public class CustomerService {
-    private final Map<Long, Map<Long, Customer>> restaurantCustomers = new HashMap<>();
+    private final Map<Long, Map<Integer, Customer>> restaurantCustomers = new HashMap<>();
 
     @Autowired
     private RestaurantRepository restaurantRepository;
@@ -27,12 +27,12 @@ public class CustomerService {
 
     // 客を追加
     public void addCustomer(long restaurantId, Customer customer) {
-        // `restaurantId`がすでに存在する場合、直接`restaurantCustomers.get(restaurantId)`を使えば良い
+        restaurantCustomers.putIfAbsent(restaurantId, new HashMap<>());
         restaurantCustomers.get(restaurantId).put(customer.getSeatId(), customer);
     }
 
     // 特定のレストランの客リストを取得
-    public Map<Long, Customer> getCustomersByRestaurant(long restaurantId) {
+    public Map<Integer, Customer> getCustomersByRestaurant(long restaurantId) {
         return restaurantCustomers.getOrDefault(restaurantId, new HashMap<>());
     }
 

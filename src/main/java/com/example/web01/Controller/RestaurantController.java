@@ -17,7 +17,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -57,6 +59,7 @@ public class RestaurantController {
 
         model.addAttribute("restaurant", restaurant);
         if("addCustomer".equals(action)){
+            model.addAttribute("customers", new HashMap<Long, Customer>());
             return "restaurant/newCustomer";
         }
         else if("popCustomer".equals(action)){
@@ -192,6 +195,23 @@ public class RestaurantController {
         model.addAttribute("restaurant", restaurant);
 
         return "restaurant/modifyInformation";
+    }
+
+    @PostMapping("/{restaurantId}/Customer/Add")
+    public String addNewCustomer(@PathVariable Long restaurantId, @RequestParam("seatId") int seatId, Model model) {
+        Customer new_customer = new Customer(seatId, restaurantId.intValue());
+        customerService.addCustomer(restaurantId, new_customer);
+
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
+
+        return "restaurant/newCustomer";
     }
 
     public RestaurantEntity getRestaurant(long restaurant_id){

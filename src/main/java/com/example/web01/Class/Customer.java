@@ -4,19 +4,20 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.cglib.core.Local;
 
-import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @Setter
 public class Customer {
-    private long seatId;
+    private int seatId;
     private int numOfPeople;
-    private LocalDate registrationDate;
+    private ZonedDateTime registrationDate;
     private int totalMoney;
     private int restaurantId;
-    private Map<Integer, Integer> order;
+    private Map<Long, Integer> order;
 
     public Customer(int seatId, int restaurantId) {
         this.seatId = seatId;
@@ -24,7 +25,7 @@ public class Customer {
 
         this.numOfPeople = 0;
         this.totalMoney = 0;
-        this.registrationDate = LocalDate.now();
+        this.registrationDate = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"));
         this.order = new HashMap<>();
     }
 
