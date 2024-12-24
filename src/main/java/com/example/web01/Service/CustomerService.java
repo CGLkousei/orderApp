@@ -40,4 +40,13 @@ public class CustomerService {
     public Customer getCustomer(long restaurantId, long seatId) {
         return restaurantCustomers.getOrDefault(restaurantId, new HashMap<>()).get(seatId);
     }
+
+    //特定の席IDの客を初期化
+    public void initializeCustomer(long restaurantId, long seatId){
+        if(restaurantCustomers.containsKey(restaurantId)){
+            if(restaurantCustomers.get(restaurantId).containsKey((int)seatId)){
+                restaurantCustomers.get(restaurantId).remove((int)seatId);
+            }
+        }
+    }
 }

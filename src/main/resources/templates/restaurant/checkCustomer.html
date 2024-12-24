@@ -6,5 +6,26 @@
 </head>
 
 <body>
-<p th:text="${message}"></p>
+    <table border="1">
+        <form th:action="@{/restaurant/{id}/Customer/Delete(id=${restaurant.id})}" method="post">
+            <tr th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
+                <div>
+                    席番号 : <span th:text="${i}"></span>
+                </div>
+
+                <div th:if="${customers.containsKey(i)}">
+                    注文開始日時 : <span th:text="${customers.get(i).registrationDate}"></span>
+                    合計金額 : <span th:text="${customers.get(i).totalMoney}"></span>
+                </div>
+
+                <div th:if="${customers.containsKey(i)}">
+                    <button type="submit" name="seatId" th:value="${i}">
+                        <span th:text="${i}"></span>の削除
+                    </button>
+                </div>
+            </tr>
+        </form>
+    </table>
+
+    <a th:href="@{/restaurant/{id}/home(id=${restaurant.id})}">Homeに戻る</a>
 </body>

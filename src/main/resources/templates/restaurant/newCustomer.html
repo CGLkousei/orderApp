@@ -20,10 +20,12 @@
 
                 <div th:if="${!customers.containsKey(i)}">
                     <button type="submit" name="seatId" th:value="${i}">
-                        ボタン <span th:text="${i}"></span>
+                        <span th:text="${i}"></span>を追加
                     </button>
                 </div>
             </tr>
         </form>
     </table>
+
+    <a th:href="@{/restaurant/{id}/home(id=${restaurant.id})}">Homeに戻る</a>
 </body>
