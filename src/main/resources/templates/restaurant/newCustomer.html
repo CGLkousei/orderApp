@@ -6,4 +6,11 @@
 </head>
 
 <body>
+    <form th:action="@{/restaurant/{id}/Update/Dishes(id=${restaurant.id})}" method="post">
+        <div th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
+            <button type="submit" name="buttonId" th:value="${i}">
+                ボタン <span th:text="${i}"></span>
+            </button>
+        </div>
+    </form>
 </body>
