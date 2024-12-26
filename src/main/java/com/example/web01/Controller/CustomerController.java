@@ -1,6 +1,8 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
+import com.example.web01.Data.ParamDishes;
+import com.example.web01.Data.ParamOrders;
 import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
@@ -13,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -170,8 +171,23 @@ public class CustomerController {
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("categories", categories);
         model.addAttribute("dishes", dishes);
-        model.addAttribute("message", cookieToken + " : " + seatToken);
+        model.addAttribute("customer", customer);
 
         return "order/orderHome";
     }
+
+    @PostMapping("/submit")
+    public String submitOrder(@ModelAttribute("paramOrders") ParamOrders po, Model model){
+        List<DishEntity> dishes = dishService.getAllDishes();
+        for(Long key : po.getOrders().keySet()){
+            for(DishEntity dish : dishes){
+                if(dish.getId() == key){
+                    System.out.println("料理: " + dish.getName() + ", 個数" + po.getOrders().get(key));
+                }
+            }
+        }
+
+        return "order/orderHome";
+    }
+
 }

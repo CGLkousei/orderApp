@@ -2,72 +2,75 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>customer home</title>
+    <title>order home</title>
+    <script src="/js/orderFunc.js" defer></script>
 </head>
 
 <body>
-    <h2>注文画面</h2>
-    <p th:text="${message}"></p>
+    <h2><span th:text="${restaurant.name}"></span> 注文画面</h2>
 
-    <p>restaurant</p>
-    <table border="1">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th>name</th>
-            <th>email</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td th:text="${restaurant.id}"></td>
-            <td th:text="${restaurant.name}"></td>
-            <td th:text="${restaurant.email}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <div id="categoryContainer">
+        <label th:each="category, iterStat : ${restaurant.categories}">
+            <input type="radio" name="category" th:value="${category.id}" th:text="${category.name}" th:checked="${iterStat.index == 0}">
+        </label>
+    </div>
 
-    <p>categories</p>
-    <table border="1">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th>名前</th>
-            <th>restaurant id</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="category : ${categories}">
-            <td th:text="${category.id}"></td>
-            <td th:text="${category.name}"></td>
-            <td th:text="${category.restaurant.id}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <div id="selectedCategory">
+        <h3><span id="selectedCategoryName" th:text="${categories[0].name}"></span></h3>
+    </div>
 
-    <p>dishes</p>
-    <table border="1">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th>名前</th>
-            <th>価格</th>
-            <th>説明</th>
-            <th>category id</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="dish : ${dishes}">
-            <td th:text="${dish.id}"></td>
-            <td th:text="${dish.name}"></td>
-            <td th:text="${dish.price}"></td>
-            <td th:text="${dish.description}"></td>
-            <td th:text="${dish.category.id}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <form th:action="@{/order/submit}" th:object="${paramOrders}" method="post">
+        <div th:each="category, iterStat1 : ${categories}">
+            <div th:id="'category-' + ${category.id}" class="content" style="display: none;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>料理名</th>
+                        <th>価格</th>
+                        <th>説明</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="dish-row" th:each="dish, iterStat2 : ${category.dishes}">
+                        <input type="hidden" th:value="${dish.id}" class="dish-id">
+                        <td th:text="${dish.name}" class="dish-name"></td>
+                        <td th:text="${dish.price}" class="dish-price"></td>
+                        <td th:text="${dish.description}" class="dish-description"></td>
+                        <td><button type="button" class="orderDish">注文する</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <form th:action="@{/customer/home}" method="POST">
-        <input type="submit" value="開始" class="btn">
+        <div id="order-modal" style="display: none;">
+            <h2>注文詳細</h2>
+            <input type="hidden" id="modal-dish-id">
+            <p><strong>料理名:</strong> <span id="modal-dish-name"></span></p>
+            <p><strong>価格:</strong> ¥<span id="modal-dish-price"></span></p>
+            <p><strong>説明:</strong> <span id="modal-dish-description"></span></p>
+            <label for="quantity">個数:</label>
+            <input type="number" id="quantity" name="quantity" min="1" required>
+            <br><br>
+            <button type="button" onclick="submitOrder()">注文</button>
+            <button type="button" onclick="closeOrderModal()">キャンセル</button>
+        </div>
+
+        <div id="shopping-cart">
+            <table>
+                <thead>
+                    <tr>
+                        <th>料理名</th>
+                        <th>個数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit">注文を確定する</button>
     </form>
+
 </body>
