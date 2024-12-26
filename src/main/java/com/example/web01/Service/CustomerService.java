@@ -38,7 +38,7 @@ public class CustomerService {
 
     // 特定の席IDの客を取得
     public Customer getCustomer(long restaurantId, long seatId) {
-        return restaurantCustomers.getOrDefault(restaurantId, new HashMap<>()).get(seatId);
+        return restaurantCustomers.getOrDefault(restaurantId, new HashMap<>()).get((int)seatId);
     }
 
     //特定の席IDの客を初期化

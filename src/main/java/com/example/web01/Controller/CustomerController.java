@@ -127,6 +127,9 @@ public class CustomerController {
             }
         }
 
+        Customer new_customer = new Customer(Integer.parseInt(seatId), Integer.parseInt(restaurantId));
+        customerService.addCustomer(Long.parseLong(restaurantId), new_customer);
+
         Customer customer = customerService.getCustomer(Long.parseLong(restaurantId), Long.parseLong(seatId));
         String seatToken = customer.getToken();
 
@@ -135,7 +138,8 @@ public class CustomerController {
             ResponseCookie responseCookie = ResponseCookie.from(cookieKey + "_" + restaurantId + "_" + seatId, seatToken)
                     .httpOnly(true)
                     .secure(true)
-                    .maxAge(60 * 60 * 12 * effectiveDays)
+//                    .maxAge(60 * 60 * 12 * effectiveDays)
+                    .maxAge(0)
                     .path("/")
                     .sameSite("Strict")
                     .build();
