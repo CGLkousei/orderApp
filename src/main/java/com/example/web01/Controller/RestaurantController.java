@@ -241,9 +241,9 @@ public class RestaurantController {
     }
 
     public CategoryEntity getCategory(long category_id, List<CategoryEntity> categories){
-        for(CategoryEntity c : categories){
-            if(c.getId() == category_id)
-                return c;
+        for(CategoryEntity category : categories){
+            if(category.getId() == category_id)
+                return category;
         }
 
         return null;

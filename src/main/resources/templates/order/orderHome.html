@@ -16,47 +16,47 @@
     </div>
 
     <div id="selectedCategory">
-        <h3><span id="selectedCategoryName" th:text="${categories[0].name}"></span></h3>
+        <h3><span id="selectedCategoryName" th:text="${restaurant.categories[0].name}"></span></h3>
     </div>
 
-    <form th:action="@{/order/submit}" th:object="${paramOrders}" method="post">
-        <div th:each="category, iterStat1 : ${categories}">
-            <div th:id="'category-' + ${category.id}" class="content" style="display: none;">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>料理名</th>
-                        <th>価格</th>
-                        <th>説明</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="dish-row" th:each="dish, iterStat2 : ${category.dishes}">
-                        <input type="hidden" th:value="${dish.id}" class="dish-id">
-                        <td th:text="${dish.name}" class="dish-name"></td>
-                        <td th:text="${dish.price}" class="dish-price"></td>
-                        <td th:text="${dish.description}" class="dish-description"></td>
-                        <td><button type="button" class="orderDish">注文する</button></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div th:each="category, iterStat1 : ${restaurant.categories}">
+        <div th:id="'category-' + ${category.id}" class="content" style="display: none;">
+            <table>
+                <thead>
+                <tr>
+                    <th>料理名</th>
+                    <th>価格</th>
+                    <th>説明</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="dish-row" th:each="dish, iterStat2 : ${category.dishes}">
+                    <input type="hidden" th:value="${dish.id}" class="dish-id">
+                    <td th:text="${dish.name}" class="dish-name"></td>
+                    <td th:text="${dish.price}" class="dish-price"></td>
+                    <td th:text="${dish.description}" class="dish-description"></td>
+                    <td><button type="button" class="orderDish">注文する</button></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <div id="order-modal" style="display: none;">
-            <h2>注文詳細</h2>
-            <input type="hidden" id="modal-dish-id">
-            <p><strong>料理名:</strong> <span id="modal-dish-name"></span></p>
-            <p><strong>価格:</strong> ¥<span id="modal-dish-price"></span></p>
-            <p><strong>説明:</strong> <span id="modal-dish-description"></span></p>
-            <label for="quantity">個数:</label>
-            <input type="number" id="quantity" name="quantity" min="1" required>
-            <br><br>
-            <button type="button" onclick="submitOrder()">注文</button>
-            <button type="button" onclick="closeOrderModal()">キャンセル</button>
-        </div>
+    <div id="order-modal" style="display: none;">
+        <h2>注文詳細</h2>
+        <input type="hidden" id="modal-dish-id">
+        <p><strong>料理名:</strong> <span id="modal-dish-name"></span></p>
+        <p><strong>価格:</strong> ¥<span id="modal-dish-price"></span></p>
+        <p><strong>説明:</strong> <span id="modal-dish-description"></span></p>
+        <label for="quantity">個数:</label>
+        <input type="number" id="quantity" name="quantity" min="1" required>
+        <br><br>
+        <button type="button" onclick="submitOrder()">注文</button>
+        <button type="button" onclick="closeOrderModal()">キャンセル</button>
+    </div>
 
+    <form th:action="@{/order/submit(restaurantId=${restaurant.id}, seatId=${customer.seatId})}" th:object="${paramOrders}" method="post">
         <div id="shopping-cart">
             <table>
                 <thead>

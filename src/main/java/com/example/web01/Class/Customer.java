@@ -43,4 +43,15 @@ public class Customer {
         this(0, 0);
     }
 
+    public void addOrder(Map<Long, Integer> new_orders){
+        for(long id : new_orders.keySet()){
+            if(this.order.containsKey(id)){
+                this.order.put(id, this.order.get(id) + new_orders.get(id));
+            }
+            else{
+                this.order.put(id, new_orders.get(id));
+            }
+        }
+    }
+
 }

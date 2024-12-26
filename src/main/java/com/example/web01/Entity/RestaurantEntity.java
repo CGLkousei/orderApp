@@ -1,5 +1,6 @@
 package com.example.web01.Entity;
 
+import com.example.web01.Class.Dish;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -48,5 +49,14 @@ public class RestaurantEntity {
 
     public RestaurantEntity() {
         this(null, "", "", 0L, new ArrayList<>());
+    }
+
+    public List<DishEntity> getDishes(){
+        List<DishEntity> dishes = new ArrayList<>();
+        for(CategoryEntity category : this.categories){
+            dishes.addAll(category.getDishes());
+        }
+
+        return  dishes;
     }
 }

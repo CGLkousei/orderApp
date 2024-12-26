@@ -1,12 +1,11 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
-import com.example.web01.Data.ParamDishes;
+import com.example.web01.Class.Dish;
 import com.example.web01.Data.ParamOrders;
 import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
-import com.example.web01.Entity.SeatEntity;
 import com.example.web01.Service.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,13 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,33 +38,33 @@ public class CustomerController {
     private static final int effectiveDays = 3;
     private static final String cookieKey = "Token";
 
-    @GetMapping("/customer/launch")
-    public String launchCustomer(){
-        return "customer/sample";
-    }
-    @PostMapping("/customer/home")
-    public String displayCustomerHome(HttpServletRequest request){
-        Cookie[] cookies = request.getCookies();
-
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                System.out.println("Cookie Name: " + cookie.getName());
-                if(cookie.getName().equals(cookieKey + "_1_1")){
-                    long timeStamp = Long.parseLong(cookie.getValue());
-                    Instant instant = Instant.ofEpochMilli(timeStamp);
-                    LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Tokyo"));
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    String formattedDate = dateTime.format(formatter);
-                    System.out.println("Cookie Value: " + formattedDate);
-                }
-                else{
-                    System.out.println("Cookie Value: " + cookie.getValue());
-                }
-            }
-        }
-
-        return "order/orderHome";
-    }
+//    @GetMapping("/customer/launch")
+//    public String launchCustomer(){
+//        return "customer/sample";
+//    }
+//    @PostMapping("/customer/home")
+//    public String displayCustomerHome(HttpServletRequest request){
+//        Cookie[] cookies = request.getCookies();
+//
+//        if(cookies != null){
+//            for(Cookie cookie : cookies){
+//                System.out.println("Cookie Name: " + cookie.getName());
+//                if(cookie.getName().equals(cookieKey + "_1_1")){
+//                    long timeStamp = Long.parseLong(cookie.getValue());
+//                    Instant instant = Instant.ofEpochMilli(timeStamp);
+//                    LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Tokyo"));
+//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//                    String formattedDate = dateTime.format(formatter);
+//                    System.out.println("Cookie Value: " + formattedDate);
+//                }
+//                else{
+//                    System.out.println("Cookie Value: " + cookie.getValue());
+//                }
+//            }
+//        }
+//
+//        return "order/orderHome";
+//    }
 
 //    @GetMapping("/order/home")
 //    public String displayOrderPage(@RequestParam String restaurantId, @RequestParam String seatNo,
@@ -161,33 +157,60 @@ public class CustomerController {
         }
         RestaurantEntity restaurant = restaurantEntity.get();
 
-        List<CategoryEntity> categories = categoryService.getCategoriesByRestaurantId(Long.parseLong(restaurantId));
-        List<Long> categoryIds = new ArrayList<>();
-        for(int i = 0; i < categories.size(); i++){
-            categoryIds.add(categories.get(i).getId());
-        }
-        List<DishEntity> dishes = dishService.getDishesByCategoriesId(categoryIds);
-
         model.addAttribute("restaurant", restaurant);
-        model.addAttribute("categories", categories);
-        model.addAttribute("dishes", dishes);
         model.addAttribute("customer", customer);
 
         return "order/orderHome";
     }
 
     @PostMapping("/submit")
-    public String submitOrder(@ModelAttribute("paramOrders") ParamOrders po, Model model){
-        List<DishEntity> dishes = dishService.getAllDishes();
-        for(Long key : po.getOrders().keySet()){
-            for(DishEntity dish : dishes){
-                if(dish.getId() == key){
-                    System.out.println("料理: " + dish.getName() + ", 個数" + po.getOrders().get(key));
-                }
-            }
+    public String submitOrder(@RequestParam String restaurantId, @RequestParam String seatId, @ModelAttribute("paramOrders") ParamOrders po, Model model){
+        int restaurantID = Integer.parseInt(restaurantId);
+        int seatID = Integer.parseInt(seatId);
+
+        RestaurantEntity restaurant = getRestaurant(restaurantID);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "order/errorPage";
         }
 
+        List<DishEntity> dishes = restaurant.getDishes();
+        DishEntity[] order_dishes = getDish(new ArrayList<>(po.getOrders().keySet()), dishes);
+
+        Customer customer = customerService.getCustomer(restaurantID, seatID);
+        int total = 0, iter = 0;
+        for(Long key: po.getOrders().keySet()){
+            total += order_dishes[iter].getPrice() * po.getOrders().get(key);
+            iter++;
+        }
+
+        customer.setTotalMoney(customer.getTotalMoney() + total);
+        customer.addOrder(po.getOrders());
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("customer", customer);
+
         return "order/orderHome";
+    }
+
+    public DishEntity[] getDish(List<Long> dish_ids, List<DishEntity> dishes){
+        DishEntity[] returnDishes = new DishEntity[dish_ids.size()];
+        for(DishEntity dish : dishes){
+            int index = dish_ids.indexOf(dish.getId());
+            if(index >= 0)
+                returnDishes[index] = dish;
+        }
+
+        return returnDishes;
+    }
+
+    public RestaurantEntity getRestaurant(long restaurant_id){
+        Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(restaurant_id);
+        if(!restaurantEntity.isPresent()){
+            return null;
+        }
+
+        return restaurantEntity.get();
     }
 
 }
