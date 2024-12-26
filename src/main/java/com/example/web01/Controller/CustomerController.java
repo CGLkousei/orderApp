@@ -1,13 +1,11 @@
 package com.example.web01.Controller;
 
+import com.example.web01.Class.Customer;
 import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
 import com.example.web01.Entity.SeatEntity;
-import com.example.web01.Service.CategoryService;
-import com.example.web01.Service.DishService;
-import com.example.web01.Service.RestaurantService;
-import com.example.web01.Service.SeatService;
+import com.example.web01.Service.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,7 +36,7 @@ public class CustomerController {
     @Autowired
     private DishService dishService;
     @Autowired
-    private SeatService seatService;
+    private CustomerService customerService;
 
     private static final int effectiveDays = 3;
     private static final String cookieKey = "Token";
@@ -129,12 +127,8 @@ public class CustomerController {
             }
         }
 
-        Optional<SeatEntity> seat = seatService.getSeatByIdAndRestaurantId(Long.parseLong(seatId), Long.parseLong(restaurantId));
-        String seatToken = seat.map(SeatEntity::getToken).orElse(null);
-        if(seatToken == null){
-            model.addAttribute("message", "The link may be incorrect. Please reread the QR code.");
-            return "order/errorPage";
-        }
+        Customer customer = customerService.getCustomer(Long.parseLong(restaurantId), Long.parseLong(seatId));
+        String seatToken = customer.getToken();
 
         // 初回アクセスの場合、"firstVisitTime"クッキーを設定
         if (isFirstVisit) {
