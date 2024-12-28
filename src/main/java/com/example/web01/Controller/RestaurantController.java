@@ -18,6 +18,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -36,7 +38,8 @@ public class RestaurantController {
     @Autowired
     private QRCodeService qrCodeService;
 
-    private int QRCodeResolution = 200;
+    private static final int QRCodeResolution = 200;
+    private static final String HOME_URL = "http://localhost:8080/order/home";
 
     @GetMapping("/{restaurantId}/home")
     public String addCustomerDisplay(@PathVariable Long restaurantId, Model model){
@@ -83,7 +86,7 @@ public class RestaurantController {
                         continue;;
 
                     // QRコードを生成
-                    byte[] qrCodeImage = qrCodeService.generateQRCodeImage(inputs[i], QRCodeResolution, QRCodeResolution);
+                    byte[] qrCodeImage = qrCodeService.generateQRCodeImage(HOME_URL + inputs[i], QRCodeResolution, QRCodeResolution);
                     // Base64エンコード
                     String encodedQRCode = Base64.getEncoder().encodeToString(qrCodeImage);
                     // モデルにQRコードを渡す
@@ -280,12 +283,62 @@ public class RestaurantController {
             return "restaurant/errorPage";
         }
 
+        int[] IDs = new int[form.getSelectedOptions().size()];
+        int index = 0;
         for(String id : form.getSelectedOptions()) {
-            System.out.println("id : " + id);
+            IDs[index] = Integer.parseInt(id) - 1;
+            index++;
         }
 
+        String[] qrCodes = new String[restaurant.getSeatNum().intValue()];
+        String[] inputs = new String[restaurant.getSeatNum().intValue()];
+        List<SeatEntity> seats = restaurant.getSeats();
+        index = 0;
+        for(SeatEntity seat : seats){
+            final int tmp_index = index;
+            boolean found = Arrays.stream(IDs).anyMatch(id -> id == tmp_index);
+            if(found) {
+                System.out.println("index: " + index);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+                String formattedDate = LocalDateTime.now().format(formatter);
+                inputs[index] = "?restaurantId=" + restaurant.getId() + "&seatId=" + index + 1 + "&token=" + formattedDate;
+            }
+            else
+                inputs[index] = seat.getToken();
+
+            index++;
+        }
+
+        for(;index < inputs.length; index++){
+            final int tmp_index = index;
+            boolean found = Arrays.stream(IDs).anyMatch(id -> id == tmp_index);
+            if(found) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+                String formattedDate = LocalDateTime.now().format(formatter);
+                int seatIndex = index + 1;
+                inputs[index] = "?restaurantId=" + restaurant.getId() + "&seatId=" + seatIndex + "&token=" + formattedDate;
+            }
+        }
+        try {
+            for(int i = 0; i < inputs.length; i++){
+                if(inputs[i] == null)
+                    continue;;
+
+                // QRコードを生成
+                byte[] qrCodeImage = qrCodeService.generateQRCodeImage(HOME_URL + inputs[i], QRCodeResolution, QRCodeResolution);
+                // Base64エンコード
+                String encodedQRCode = Base64.getEncoder().encodeToString(qrCodeImage);
+                // モデルにQRコードを渡す
+                qrCodes[i] = encodedQRCode;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("QRCodes", qrCodes);
         model.addAttribute("restaurant", restaurant);
-        return "restaurant/updateQRcode";
+
+        return "restaurant/confirmQRcode";
     }
 
     public RestaurantEntity getRestaurant(long restaurant_id){

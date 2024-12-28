@@ -29,7 +29,7 @@ public class Customer {
         this.registrationDate = LocalDateTime.now();
         this.order = new HashMap<>();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
         String formattedDate = registrationDate.format(formatter);
         try {
             this.token = Token.generateToken(String.valueOf(restaurantId), String.valueOf(seatId), formattedDate);
