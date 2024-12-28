@@ -164,6 +164,25 @@ public class CustomerController {
         return "order/orderHome";
     }
 
+    @PostMapping("/home")
+    public String displayOrderPage(@RequestParam String restaurantId, @RequestParam String seatId, Model model) {
+        int restaurantID = Integer.parseInt(restaurantId);
+        int seatID = Integer.parseInt(seatId);
+
+        RestaurantEntity restaurant = getRestaurant(restaurantID);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "order/errorPage";
+        }
+
+        Customer customer = customerService.getCustomer(restaurantID, seatID);
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("customer", customer);
+
+        return "order/orderHome";
+    }
+
     @PostMapping("/submit")
     public String submitOrder(@RequestParam String restaurantId, @RequestParam String seatId, @ModelAttribute("paramOrders") ParamOrders po, Model model){
         int restaurantID = Integer.parseInt(restaurantId);
