@@ -83,7 +83,7 @@ public class RestaurantController {
 //                e.printStackTrace();
 //            }
             model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
-            return "restaurant/generateQRcode";
+            return "restaurant/confirmQRcode";
         }
         else if("modifyDish".equals(action)){
             ParamDishes pd = new ParamDishes();

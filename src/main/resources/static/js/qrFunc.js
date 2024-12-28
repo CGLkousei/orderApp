@@ -1,16 +1,9 @@
-function handleCheckboxChange(event) {
-    const checkbox = event.target;
-    const selectedValue = checkbox.value; // 選択されたチェックボックスの値
+function handleRadioChange(event) {
+    const radio = event.target;
+    const selectedValue = radio.value; // 選択されたラジオボタンの値
 
     const selectedSeatName = document.getElementById("selectedSeatName");
-
-    // チェックされている座席を表示
-    let selectedSeats = [];
-    const checkedCheckboxes = document.querySelectorAll('input[name="seat"]:checked');
-    checkedCheckboxes.forEach(checkbox => {
-        selectedSeats.push(checkbox.value);
-    });
-    selectedSeatName.textContent = "選択された席番号: " + selectedSeats.join(", ");
+    selectedSeatName.textContent = "席番号: " + selectedValue;
 
     // すべての div を非表示にする
     const categoryDivs = document.querySelectorAll('.contents');
@@ -19,37 +12,28 @@ function handleCheckboxChange(event) {
     });
 
     // 選択された値と一致する id を持つ div を表示
-    checkedCheckboxes.forEach(checkbox => {
-        const matchingDiv = document.getElementById('contents-' + checkbox.value);
-        if (matchingDiv) {
-            matchingDiv.style.display = 'block';
-        }
-    });
+    const matchingDiv = document.getElementById('contents-' + selectedValue);
+    if (matchingDiv) {
+        matchingDiv.style.display = 'block';
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    // チェックボックスのリストを取得
-    const checkboxes = document.querySelectorAll('input[name="seat"]');
+    // ラジオボタンのリストを取得
+    const radioButtons = document.querySelectorAll('input[name="seat"]');
 
-    // チェックボックスの選択イベントを監視
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', handleCheckboxChange);
+    // ラジオボタンの選択イベントを監視
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', handleRadioChange);
     });
 
     // ページ読み込み時にデフォルトの選択値を反映
-    const selectedCheckboxes = document.querySelectorAll('input[name="seat"]:checked');
-    selectedCheckboxes.forEach(checkbox => {
-        const matchingDiv = document.getElementById('contents-' + checkbox.value);
+    const selectedRadio = document.querySelector('input[name="seat"]:checked');
+    if (selectedRadio) {
+        const selectedValue = selectedRadio.value;
+        const matchingDiv = document.getElementById('contents-' + selectedValue);
         if (matchingDiv) {
             matchingDiv.style.display = 'block';
         }
-    });
-
-    // 最初の状態で選ばれているチェックボックスの座席番号を表示
-    let selectedSeats = [];
-    selectedCheckboxes.forEach(checkbox => {
-        selectedSeats.push(checkbox.value);
-    });
-    const selectedSeatName = document.getElementById("selectedSeatName");
-    selectedSeatName.textContent = "選択された席番号: " + selectedSeats.join(", ");
+    }
 });
