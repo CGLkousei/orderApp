@@ -8,10 +8,6 @@
 <body>
     <h2><span th:text="${restaurant.name}"></span> 注文確認画面</h2>
 
-    <div id="selectedCategory">
-        <h3><span id="selectedCategoryName" th:text="${restaurant.categories[0].name}"></span></h3>
-    </div>
-
     <table>
         <thead>
         <tr>
@@ -25,12 +21,16 @@
         <tr th:each="dish, iter : ${dishes}">
             <td th:text="${dish.name}"></td>
             <td th:text="${dish.price}"></td>
-            <td th:text="${numbers[__${iter}__]}"></td>
-            <td th:text="${prices[__${iter}__]}"></td>
+            <td th:text="${numbers[iter.index]}"></td>
+            <td th:text="${prices[iter.index]}"></td>
         </tr>
         </tbody>
     </table>
 
-    <h2>合計金額 : <span th:text="${customer.totalMoney}"></span></h2>
+    <h2>合計金額 : <span th:text="${customer.totalMoney}"></span>円</h2>
+
+    <form th:action="@{/order/home(restaurantId=${restaurant.id}, seatId=${customer.seatId})}" method="post">
+        <button type="submit">注文画面に戻る</button>
+    </form>
 
 </body>

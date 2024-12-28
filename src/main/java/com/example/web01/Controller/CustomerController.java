@@ -131,7 +131,8 @@ public class CustomerController {
         String seatToken = customer.getToken();
 
         // 初回アクセスの場合、"firstVisitTime"クッキーを設定
-        if (isFirstVisit) {
+//        if (isFirstVisit) {
+        if (true) {
             ResponseCookie responseCookie = ResponseCookie.from(cookieKey + "_" + restaurantId + "_" + seatId, seatToken)
                     .httpOnly(true)
                     .secure(true)
@@ -221,10 +222,10 @@ public class CustomerController {
         Customer customer = customerService.getCustomer(restaurantID, seatID);
         String seatToken = customer.getToken();
 
-        if(!seatToken.equals(cookieToken)){
-            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
-            return "order/errorPage";
-        }
+//        if(!seatToken.equals(cookieToken)){
+//            model.addAttribute("message", "An unexpected error has occurred. Please read the QR code again");
+//            return "order/errorPage";
+//        }
 
         List<DishEntity> dishes = restaurant.getDishes();
         List<Long> id_list = new ArrayList<>(customer.getOrder().keySet());
@@ -240,6 +241,10 @@ public class CustomerController {
                 dish_numbers[index] = customer.getOrder().get(dish.getId());
                 prices[index] = dish.getPrice() * dish_numbers[index];
             }
+        }
+
+        for(int i = 0; i < order_dishes.length; i++){
+            System.out.println("Dish: " + order_dishes[i].getName() + ", Num: " + dish_numbers[i] + ", Price: " + prices[i]);
         }
 
         model.addAttribute("restaurant", restaurant);
