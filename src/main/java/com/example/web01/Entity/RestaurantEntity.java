@@ -1,6 +1,5 @@
 package com.example.web01.Entity;
 
-import com.example.web01.Class.Dish;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +33,9 @@ public class RestaurantEntity {
 
     @OneToMany(mappedBy = "restaurant")
     private List<CategoryEntity> categories;
+
+    @OneToMany(mappedBy = "restaurant")
+    private List<SeatEntity> seats;
 
     public RestaurantEntity(Long id, String name, String email, Long seatNum, List<CategoryEntity> categories) {
         this.id = id;

@@ -1,9 +1,7 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
-import com.example.web01.Class.Dish;
 import com.example.web01.Data.ParamOrders;
-import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
 import com.example.web01.Service.*;
@@ -16,9 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,68 +32,6 @@ public class CustomerController {
 
     private static final int effectiveDays = 3;
     private static final String cookieKey = "Token";
-
-//    @GetMapping("/customer/launch")
-//    public String launchCustomer(){
-//        return "customer/sample";
-//    }
-//    @PostMapping("/customer/home")
-//    public String displayCustomerHome(HttpServletRequest request){
-//        Cookie[] cookies = request.getCookies();
-//
-//        if(cookies != null){
-//            for(Cookie cookie : cookies){
-//                System.out.println("Cookie Name: " + cookie.getName());
-//                if(cookie.getName().equals(cookieKey + "_1_1")){
-//                    long timeStamp = Long.parseLong(cookie.getValue());
-//                    Instant instant = Instant.ofEpochMilli(timeStamp);
-//                    LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Tokyo"));
-//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//                    String formattedDate = dateTime.format(formatter);
-//                    System.out.println("Cookie Value: " + formattedDate);
-//                }
-//                else{
-//                    System.out.println("Cookie Value: " + cookie.getValue());
-//                }
-//            }
-//        }
-//
-//        return "order/orderHome";
-//    }
-
-//    @GetMapping("/order/home")
-//    public String displayOrderPage(@RequestParam String restaurantId, @RequestParam String seatNo,
-//                                   @RequestParam(required = false) String token, @RequestParam(required = false) Long timeStamp,
-//                                   Model model){
-//
-//        //現在時刻を取得
-//        long now = Instant.now().toEpochMilli();
-//        //現在時刻とtimeStampの差が有効時間(s)以上または、timeStampがないなら不正アクセスと判断
-//        if(timeStamp == null || (now - timeStamp > effectiveTime * 1000)){
-//            model.addAttribute("message", "tokenが無効または期限切れです。再度QRコードをスキャンしてください。");
-//            return "order/error";
-//        }
-//
-//        try{
-//            //初回アクセスの場合tokenを作成する
-//            if(token == null){
-//                String newToken = Token.generateToken(restaurantId, seatNo, timeStamp == null ? now : timeStamp);
-//                String redirectUrl = "/order/home?restaurantId=" + restaurantId + "&seatNo=" + seatNo + "&token=" + newToken + "&timeStamp=" + now;
-//                return "order/home";
-//            }
-//
-//            //tokenを検証する
-//            if(!Token.verifyToken(restaurantId, seatNo, timeStamp, token)){
-//                return ResponseEntity.status(401).body("Invalid token.");
-//            }
-//
-//            String redirectUrl = "restaurantId=" + restaurantId + "&seatNo=" + seatNo;
-//            return ResponseEntity.ok("Welcome to the order page for " + redirectUrl);
-//        } catch (Exception e) {
-//            e.printStackTrace();;
-//            return ResponseEntity.status(500).body("Internal server error.");
-//        }
-//    }
 
     /*
         今後やること

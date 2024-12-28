@@ -17,10 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/restaurant")
@@ -35,6 +32,10 @@ public class RestaurantController {
     private SeatService seatService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private QRCodeService qrCodeService;
+
+    private int QRCodeResolution = 200;
 
     @GetMapping("/{restaurantId}/home")
     public String addCustomerDisplay(@PathVariable Long restaurantId, Model model){
@@ -59,19 +60,35 @@ public class RestaurantController {
 
         model.addAttribute("restaurant", restaurant);
         if("addCustomer".equals(action)){
-            model.addAttribute("customers", new HashMap<Long, Customer>());
+            model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
             return "restaurant/newCustomer";
         }
         else if("popCustomer".equals(action)){
             model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
             return "restaurant/checkCustomer";
         }
+        else if("makeQRcode".equals(action)) {
+//            List<String> qrCodes = new ArrayList<>();
+//            List<SeatEntity> seats = restaurant.getSeats();
+//            try {
+//                // QRコードを生成
+//                byte[] qrCodeImage = qrCodeService.generateQRCodeImage(text, QRCodeResolution, QRCodeResolution);
+//
+//                // Base64エンコード
+//                String encodedQRCode = Base64.getEncoder().encodeToString(qrCodeImage);
+//
+//                // モデルにQRコードを渡す
+//                model.addAttribute("qrCode", encodedQRCode);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+            model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
+            return "restaurant/generateQRcode";
+        }
         else if("modifyDish".equals(action)){
             ParamDishes pd = new ParamDishes();
             pd.setCategories(restaurant.getCategories());
-//           List<CategoryEntity> categories = restaurant.getCategories();
-           model.addAttribute("paramDishes", pd);
-//           model.addAttribute("categories", categories);
+            model.addAttribute("paramDishes", pd);
             return "restaurant/modifyDish";
         }
         else if("modifyInfo".equals(action)){
