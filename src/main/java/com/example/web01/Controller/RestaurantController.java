@@ -75,10 +75,13 @@ public class RestaurantController {
             String[] qrCodes = new String[restaurant.getSeatNum().intValue()];
             String[] inputs = new String[restaurant.getSeatNum().intValue()];
             List<SeatEntity> seats = restaurant.getSeats();
-            int index = 0;
+
             for(SeatEntity seat : seats){
-                inputs[index] = seat.getToken();
-                index++;
+                String query = seat.getToken();
+                int seat_id = getSeatID(query, "seatId");
+                if(seat_id < 0)
+                    continue;;
+                inputs[seat_id - 1] = query;
             }
             try {
                 for(int i = 0; i < inputs.length; i++){
@@ -283,42 +286,56 @@ public class RestaurantController {
             return "restaurant/errorPage";
         }
 
-        int[] IDs = new int[form.getSelectedOptions().size()];
-        int index = 0;
+        List<Integer> IDs = new ArrayList<>();
         for(String id : form.getSelectedOptions()) {
-            IDs[index] = Integer.parseInt(id) - 1;
-            index++;
+            IDs.add(Integer.parseInt(id) - 1);
         }
 
         String[] qrCodes = new String[restaurant.getSeatNum().intValue()];
         String[] inputs = new String[restaurant.getSeatNum().intValue()];
         List<SeatEntity> seats = restaurant.getSeats();
-        index = 0;
+        List<Integer> yetList = new ArrayList<>();
+
         for(SeatEntity seat : seats){
-            final int tmp_index = index;
-            boolean found = Arrays.stream(IDs).anyMatch(id -> id == tmp_index);
+            String query = seat.getToken();
+            int seat_id = getSeatID(query, "seatId");
+            if(seat_id < 0)
+                continue;;
+
+            int index = seat_id - 1;
+            boolean found = IDs.contains(index);
             if(found) {
-                System.out.println("index: " + index);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
                 String formattedDate = LocalDateTime.now().format(formatter);
-                inputs[index] = "?restaurantId=" + restaurant.getId() + "&seatId=" + index + 1 + "&token=" + formattedDate;
+                inputs[index] = "?restaurantId=" + restaurant.getId() + "&seatId=" + seat_id + "&token=" + formattedDate;
+
+                SeatEntity tmp_seatEntity = seatService.getSeatById(seat.getId()).get();
+                tmp_seatEntity.setToken(inputs[index]);
+                tmp_seatEntity.setRestaurant(restaurant);
+                seatService.saveSeat(tmp_seatEntity);
+
+                yetList.add(index);
             }
             else
                 inputs[index] = seat.getToken();
 
-            index++;
         }
 
-        for(;index < inputs.length; index++){
-            final int tmp_index = index;
-            boolean found = Arrays.stream(IDs).anyMatch(id -> id == tmp_index);
-            if(found) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
-                String formattedDate = LocalDateTime.now().format(formatter);
-                int seatIndex = index + 1;
-                inputs[index] = "?restaurantId=" + restaurant.getId() + "&seatId=" + seatIndex + "&token=" + formattedDate;
-            }
+        Set<Integer> difference = new HashSet<>(IDs);
+        difference.remove(new HashSet<>(yetList));
+
+        for(int index : difference){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+            String formattedDate = LocalDateTime.now().format(formatter);
+            int seatIndex = index + 1;
+            inputs[index] = "?restaurantId=" + restaurant.getId() + "&seatId=" + seatIndex + "&token=" + formattedDate;
+
+            SeatEntity tmp_seatEntity = new SeatEntity();
+            tmp_seatEntity.setToken(inputs[index]);
+            tmp_seatEntity.setRestaurant(restaurant);
+            seatService.saveSeat(tmp_seatEntity);
         }
+
         try {
             for(int i = 0; i < inputs.length; i++){
                 if(inputs[i] == null)
@@ -377,5 +394,17 @@ public class RestaurantController {
         }
 
         return false;
+    }
+
+    public int getSeatID(String query, String seatStr){
+        String[] params = query.split("&"); // "&"で分割
+        for (String param : params) {
+            if (param.startsWith(seatStr + "=")) {
+                String seatId = param.split("=")[1]; // "="で分割して値を取得
+                return Integer.parseInt(seatId);
+            }
+        }
+
+        return -1;
     }
 }
