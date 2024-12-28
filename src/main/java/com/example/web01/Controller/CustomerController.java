@@ -193,6 +193,64 @@ public class CustomerController {
         return "order/orderHome";
     }
 
+    @PostMapping("/status")
+    public String displayOrderStatus(@RequestParam String restaurantId, @RequestParam String seatId,
+                                   HttpServletRequest request, HttpServletResponse response,
+                                   Model model) {
+        Cookie[] cookies = request.getCookies();
+        String cookieToken = null;
+
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals(cookieKey + "_" + restaurantId + "_" + seatId)){
+                    cookieToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        int restaurantID = Integer.parseInt(restaurantId);
+        int seatID = Integer.parseInt(seatId);
+
+        RestaurantEntity restaurant = getRestaurant(restaurantID);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "order/errorPage";
+        }
+
+        Customer customer = customerService.getCustomer(restaurantID, seatID);
+        String seatToken = customer.getToken();
+
+        if(!seatToken.equals(cookieToken)){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "order/errorPage";
+        }
+
+        List<DishEntity> dishes = restaurant.getDishes();
+        List<Long> id_list = new ArrayList<>(customer.getOrder().keySet());
+//        DishEntity[] order_dishes = getDish(new ArrayList<>(customer.getOrder().keySet()), dishes);
+        DishEntity[] order_dishes = new DishEntity[id_list.size()];
+        int[] dish_numbers = new int[order_dishes.length];
+        int[] prices = new int[order_dishes.length];
+
+        for(DishEntity dish : dishes){
+            int index = id_list.indexOf(dish.getId());
+            if(index >= 0){
+                order_dishes[index] = dish;
+                dish_numbers[index] = customer.getOrder().get(dish.getId());
+                prices[index] = dish.getPrice() * dish_numbers[index];
+            }
+        }
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("customer", customer);
+        model.addAttribute("dishes", order_dishes);
+        model.addAttribute("numbers", dish_numbers);
+        model.addAttribute("prices", prices);
+
+        return "order/orderStatus";
+    }
+
     public DishEntity[] getDish(List<Long> dish_ids, List<DishEntity> dishes){
         DishEntity[] returnDishes = new DishEntity[dish_ids.size()];
         for(DishEntity dish : dishes){

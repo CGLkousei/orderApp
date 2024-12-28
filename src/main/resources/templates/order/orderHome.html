@@ -8,6 +8,9 @@
 
 <body>
     <h2><span th:text="${restaurant.name}"></span> 注文画面</h2>
+    <form th:action="@{/order/status(restaurantId=${restaurant.id}, seatId=${customer.seatId})}" method="post">
+        <button type="submit">注文状況を確認する</button>
+    </form>
 
     <div id="categoryContainer">
         <label th:each="category, iterStat : ${restaurant.categories}">

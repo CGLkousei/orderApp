@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>order home</title>
+</head>
+
+<body>
+    <h2><span th:text="${restaurant.name}"></span> 注文確認画面</h2>
+
+    <div id="selectedCategory">
+        <h3><span id="selectedCategoryName" th:text="${restaurant.categories[0].name}"></span></h3>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>料理名</th>
+            <th>単価</th>
+            <th>個数</th>
+            <th>金額</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dish, iter : ${dishes}">
+            <td th:text="${dish.name}"></td>
+            <td th:text="${dish.price}"></td>
+            <td th:text="${numbers[__${iter}__]}"></td>
+            <td th:text="${prices[__${iter}__]}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>合計金額 : <span th:text="${customer.totalMoney}"></span></h2>
+
+</body>
