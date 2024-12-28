@@ -1,6 +1,7 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
+import com.example.web01.Data.MultiCheckBoxForm;
 import com.example.web01.Data.ParamDishes;
 import com.example.web01.Entity.CategoryEntity;
 import com.example.web01.Entity.DishEntity;
@@ -68,21 +69,31 @@ public class RestaurantController {
             return "restaurant/checkCustomer";
         }
         else if("makeQRcode".equals(action)) {
-//            List<String> qrCodes = new ArrayList<>();
-//            List<SeatEntity> seats = restaurant.getSeats();
-//            try {
-//                // QRコードを生成
-//                byte[] qrCodeImage = qrCodeService.generateQRCodeImage(text, QRCodeResolution, QRCodeResolution);
-//
-//                // Base64エンコード
-//                String encodedQRCode = Base64.getEncoder().encodeToString(qrCodeImage);
-//
-//                // モデルにQRコードを渡す
-//                model.addAttribute("qrCode", encodedQRCode);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-            model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
+            String[] qrCodes = new String[restaurant.getSeatNum().intValue()];
+            String[] inputs = new String[restaurant.getSeatNum().intValue()];
+            List<SeatEntity> seats = restaurant.getSeats();
+            int index = 0;
+            for(SeatEntity seat : seats){
+                inputs[index] = seat.getToken();
+                index++;
+            }
+            try {
+                for(int i = 0; i < inputs.length; i++){
+                    if(inputs[i] == null)
+                        continue;;
+
+                    // QRコードを生成
+                    byte[] qrCodeImage = qrCodeService.generateQRCodeImage(inputs[i], QRCodeResolution, QRCodeResolution);
+                    // Base64エンコード
+                    String encodedQRCode = Base64.getEncoder().encodeToString(qrCodeImage);
+                    // モデルにQRコードを渡す
+                    qrCodes[i] = encodedQRCode;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            model.addAttribute("QRCodes", qrCodes);
             return "restaurant/confirmQRcode";
         }
         else if("modifyDish".equals(action)){
@@ -248,7 +259,7 @@ public class RestaurantController {
         return "restaurant/checkCustomer";
     }
 
-    @PostMapping("/{restaurantId}/Update/QRCode")
+    @GetMapping("/{restaurantId}/Update/QRCode")
     public String updateDish(@PathVariable Long restaurantId, Model model) {
         RestaurantEntity restaurant = getRestaurant(restaurantId);
         if(restaurant == null){
@@ -257,8 +268,24 @@ public class RestaurantController {
         }
 
         model.addAttribute("restaurant", restaurant);
-        model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
-        return "restaurant/generateQRcode";
+        model.addAttribute("form", new MultiCheckBoxForm());
+        return "restaurant/updateQRcode";
+    }
+
+    @PostMapping("/{restaurantId}/Update/QRCode")
+    public String submit(@PathVariable Long restaurantId, @ModelAttribute MultiCheckBoxForm form, Model model) {
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        for(String id : form.getSelectedOptions()) {
+            System.out.println("id : " + id);
+        }
+
+        model.addAttribute("restaurant", restaurant);
+        return "restaurant/updateQRcode";
     }
 
     public RestaurantEntity getRestaurant(long restaurant_id){

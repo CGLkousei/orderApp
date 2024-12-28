@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>new Customer</title>
+    <script src="/js/updateQRcodeFunc.js" defer></script>
+</head>
+
+<body>
+    <form th:action="@{/restaurant/{id}/Update/QRCode(id=${restaurant.id})}" th:object="${form}" method="post">
+        <div th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
+            <input type="checkbox" class="seat-checkbox" th:value="${i}" th:text="'席' + ${i}" name="selectedOptions">
+        </div>
+
+        <div id="selectedSeat">
+            <h3><span id="selectedSeatName"></span></h3>
+        </div>
+
+        <button type="submit">更新する</button>
+    </form>
+
+    <a th:href="@{/restaurant/{id}/home(id=${restaurant.id})}">Homeに戻る</a>
+</body>

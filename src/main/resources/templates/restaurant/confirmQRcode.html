@@ -8,10 +8,10 @@
 
 <body>
 <div th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
-    <input type="radio" name="seat" th:value="${i}" th:text="席 + ${i}" th:checked="${i == 1}">
+    <input type="radio" name="seat" th:value="${i}" th:text="'席' + ${i}" th:checked="${i == 1}">
 </div>
 
-<form th:action="@{/restaurant/{id}/Update/QRCode(id=${restaurant.id})}" method="post">
+<form th:action="@{/restaurant/{id}/Update/QRCode(id=${restaurant.id})}" method="get">
     <button type="submit">QRコードを更新する</button>
 </form>
 
@@ -20,9 +20,9 @@
 </div>
 
 <div id="qr-content">
-    <div th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
-        <div th:id="'contents-' + ${i}" class="contents" style="display: none;">
-            <p th:text="${i}"></p>
+    <div th:each="i : ${#numbers.sequence(0, restaurant.seatNum-1)}" th:if="${QRCodes[i] != null}">
+        <div th:id="'contents-' + ${i + 1}" class="contents" style="display: none;">
+            <img th:src="'data:image/png;base64,' + ${QRCodes[i]}" alt="Generated QR Code"/>
         </div>
     </div>
 </div>
