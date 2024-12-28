@@ -248,6 +248,19 @@ public class RestaurantController {
         return "restaurant/checkCustomer";
     }
 
+    @PostMapping("/{restaurantId}/Update/QRCode")
+    public String updateDish(@PathVariable Long restaurantId, Model model) {
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
+        return "restaurant/generateQRcode";
+    }
+
     public RestaurantEntity getRestaurant(long restaurant_id){
         Optional<RestaurantEntity> restaurantEntity = restaurantService.getRestaurantById(restaurant_id);
         if(!restaurantEntity.isPresent()){

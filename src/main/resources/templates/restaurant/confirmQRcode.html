@@ -11,6 +11,10 @@
     <input type="radio" name="seat" th:value="${i}" th:text="席 + ${i}" th:checked="${i == 1}">
 </div>
 
+<form th:action="@{/restaurant/{id}/Update/QRCode(id=${restaurant.id})}" method="post">
+    <button type="submit">QRコードを更新する</button>
+</form>
+
 <div id="selectedSeat">
     <h3><span id="selectedSeatName"></span></h3>
 </div>

@@ -8,7 +8,7 @@
 
 <body>
 <div th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
-    <input type="checkbox" name="seat" th:value="席 + ${i}" th:text="${i}" th:checked="${i == 1}">
+    <input type="checkbox" name="seat" th:value="${i}" th:text="席 + ${i}" th:checked="${i == 1}">
 </div>
 
 <div id="selectedSeat">
