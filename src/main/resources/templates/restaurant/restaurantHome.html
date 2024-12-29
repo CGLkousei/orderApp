@@ -9,8 +9,6 @@
     <p th:text="${message}"></p>
     <h2><span th:text="${restaurant.name}"></span> 様</h2>
     <form th:action="@{/restaurant/{id}/handleBtn(id=${restaurant.id})}" method="post">
-        <button type="submit" name="action" value="addCustomer">新規客の追加</button>
-        <button type="submit" name="action" value="popCustomer">客の会計</button>
         <button type="submit" name="action" value="viewCustomer">注文状況の確認</button>
         <button type="submit" name="action" value="makeQRcode">QRコードの確認、更新</button>
         <button type="submit" name="action" value="modifyDish">メニューの修正</button>

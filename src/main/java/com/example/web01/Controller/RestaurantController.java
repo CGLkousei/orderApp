@@ -42,7 +42,7 @@ public class RestaurantController {
     private static final String HOME_URL = "http://localhost:8080/order/home";
 
     @GetMapping("/{restaurantId}/home")
-    public String addCustomerDisplay(@PathVariable Long restaurantId, Model model){
+    public String restaurantDisplay(@PathVariable Long restaurantId, Model model){
         RestaurantEntity restaurant = getRestaurant(restaurantId);
         if(restaurant == null){
             model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
@@ -54,6 +54,20 @@ public class RestaurantController {
         return "restaurant/restaurantHome";
     }
 
+    @GetMapping("/{restaurantId}/customer")
+    public String customerDisplay(@PathVariable Long restaurantId, Model model){
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
+
+        return "restaurant/viewCustomer";
+    }
+
     @PostMapping("/{restaurantId}/handleBtn")
     public String handleBtnFunc(@PathVariable Long restaurantId, @RequestParam("action") String action, Model model){
         RestaurantEntity restaurant = getRestaurant(restaurantId);
@@ -63,15 +77,7 @@ public class RestaurantController {
         }
 
         model.addAttribute("restaurant", restaurant);
-        if("addCustomer".equals(action)){
-            model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
-            return "restaurant/newCustomer";
-        }
-        else if("popCustomer".equals(action)){
-            model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
-            return "restaurant/checkCustomer";
-        }
-        else if("viewCustomer".equals(action)){
+        if("viewCustomer".equals(action)){
             model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
             return "restaurant/viewCustomer";
         }
@@ -234,39 +240,6 @@ public class RestaurantController {
         model.addAttribute("restaurant", restaurant);
 
         return "restaurant/modifyInformation";
-    }
-
-    @PostMapping("/{restaurantId}/Customer/Add")
-    public String addNewCustomer(@PathVariable Long restaurantId, @RequestParam("seatId") int seatId, Model model) {
-        RestaurantEntity restaurant = getRestaurant(restaurantId);
-        if(restaurant == null){
-            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
-            return "restaurant/errorPage";
-        }
-
-        Customer new_customer = new Customer(seatId, restaurantId.intValue());
-        customerService.addCustomer(restaurantId, new_customer);
-
-        model.addAttribute("restaurant", restaurant);
-        model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
-
-        return "restaurant/newCustomer";
-    }
-
-    @PostMapping("/{restaurantId}/Customer/Delete")
-    public String deleteCustomer(@PathVariable Long restaurantId, @RequestParam("seatId") int seatId, Model model) {
-        RestaurantEntity restaurant = getRestaurant(restaurantId);
-        if(restaurant == null){
-            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
-            return "restaurant/errorPage";
-        }
-
-        customerService.initializeCustomer(restaurantId, seatId);
-
-        model.addAttribute("restaurant", restaurant);
-        model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
-
-        return "restaurant/checkCustomer";
     }
 
     @PostMapping("/{restaurantId}/Customer/Control")

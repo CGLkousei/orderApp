@@ -62,6 +62,10 @@ public class CustomerController {
 //        customerService.addCustomer(Long.parseLong(restaurantId), new_customer);
 
         Customer customer = customerService.getCustomer(Long.parseLong(restaurantId), Long.parseLong(seatId));
+        if(customer == null){
+            model.addAttribute("message", "The link may be incorrect. Please reread the QR code.");
+            return "order/errorPage";
+        }
         String seatToken = customer.getToken();
 
         // 初回アクセスの場合、"firstVisitTime"クッキーを設定

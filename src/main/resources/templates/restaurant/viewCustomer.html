@@ -6,6 +6,7 @@
 </head>
 
 <body>
+    <a th:href="@{/restaurant/{id}/customer(id=${restaurant.id})}">更新する</a>
     <table border="1">
         <form th:action="@{/restaurant/{id}/Customer/Control(id=${restaurant.id})}" method="post">
             <tr th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
