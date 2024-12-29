@@ -17,6 +17,13 @@ document.addEventListener('click', function (e) {
         document.getElementById('order-modal').style.display = 'block';
     }
 
+    if (e.target && e.target.classList.contains('delete-btn')) {
+        const tr = e.target.closest('tr');  // 削除ボタンの親行を取得
+        if (tr) {
+            tr.remove();  // 親行を削除
+        }
+    }
+
     if (e.target && e.target.type === 'submit') {
         const form = e.target.closest('form');
         if (form) {
@@ -60,6 +67,9 @@ function submitOrder() {
                             type="number"
                             value="${quantity}"
                             readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="delete-btn">削除</button>
                     </td>
                 `;
 

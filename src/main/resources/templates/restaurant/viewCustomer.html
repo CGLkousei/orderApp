@@ -19,9 +19,15 @@
                     合計金額 : <span th:text="${customers.get(i).totalMoney}"></span><br>
                     注文内容 :
                     <table>
-                        <tr th:each="order : ${customers.get(i).order}">
+                        <tr th:each="order, iter : ${customers.get(i).order}">
                             <td th:text="${order.dish.name}"></td>
                             <td th:text="${order.number}"></td>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                <button type="submit" name="action" th:value="'cancel-' + ${i} + '-' + ${iter.index}">
+                                    料理のキャンセル
+                                </button>
+                            </td>
                         </tr>
                     </table>
                 </div>

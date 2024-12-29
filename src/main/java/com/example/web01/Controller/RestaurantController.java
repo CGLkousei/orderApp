@@ -259,6 +259,11 @@ public class RestaurantController {
         else if(parts[0].equals("remove")){
             customerService.initializeCustomer(restaurantId, seatId);
         }
+        else if(parts[0].equals("cancel")){
+            int order_index = Integer.parseInt(parts[2]);
+            Customer customer = customerService.getCustomer(restaurantId, seatId);
+            customer.getOrder().remove(order_index);
+        }
 
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
