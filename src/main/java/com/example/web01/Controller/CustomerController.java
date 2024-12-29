@@ -1,6 +1,7 @@
 package com.example.web01.Controller;
 
 import com.example.web01.Class.Customer;
+import com.example.web01.Data.Order;
 import com.example.web01.Data.ParamOrders;
 import com.example.web01.Entity.DishEntity;
 import com.example.web01.Entity.RestaurantEntity;
@@ -57,8 +58,8 @@ public class CustomerController {
             }
         }
 
-        Customer new_customer = new Customer(Integer.parseInt(seatId), Integer.parseInt(restaurantId));
-        customerService.addCustomer(Long.parseLong(restaurantId), new_customer);
+//        Customer new_customer = new Customer(Integer.parseInt(seatId), Integer.parseInt(restaurantId));
+//        customerService.addCustomer(Long.parseLong(restaurantId), new_customer);
 
         Customer customer = customerService.getCustomer(Long.parseLong(restaurantId), Long.parseLong(seatId));
         String seatToken = customer.getToken();
@@ -129,16 +130,24 @@ public class CustomerController {
 
         List<DishEntity> dishes = restaurant.getDishes();
         DishEntity[] order_dishes = getDish(new ArrayList<>(po.getOrders().keySet()), dishes);
+        List<Order> new_orders = new ArrayList<>();
 
         Customer customer = customerService.getCustomer(restaurantID, seatID);
         int total = 0, iter = 0;
         for(Long key: po.getOrders().keySet()){
-            total += order_dishes[iter].getPrice() * po.getOrders().get(key);
+            Order order = new Order();
+            order.setDish(order_dishes[iter]);
+            order.setNumber(po.getOrders().get(key));
+            order.setTotal(order.getDish().getPrice() * order.getNumber());
+            total += order.getTotal();
+            new_orders.add(order);
             iter++;
         }
 
+
+
         customer.setTotalMoney(customer.getTotalMoney() + total);
-        customer.addOrder(po.getOrders());
+        customer.addOrder(new_orders);
 
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("customer", customer);
@@ -180,30 +189,27 @@ public class CustomerController {
 //        }
 
         List<DishEntity> dishes = restaurant.getDishes();
-        List<Long> id_list = new ArrayList<>(customer.getOrder().keySet());
-//        DishEntity[] order_dishes = getDish(new ArrayList<>(customer.getOrder().keySet()), dishes);
-        DishEntity[] order_dishes = new DishEntity[id_list.size()];
-        int[] dish_numbers = new int[order_dishes.length];
-        int[] prices = new int[order_dishes.length];
+        List<Order> orders = customer.getOrder();
+        String[] dish_names = new String[orders.size()];
+        int[] dish_prices = new int[orders.size()];
+        int[] dish_numbers = new int[orders.size()];
+        int[] total_prices = new int[orders.size()];
 
-        for(DishEntity dish : dishes){
-            int index = id_list.indexOf(dish.getId());
-            if(index >= 0){
-                order_dishes[index] = dish;
-                dish_numbers[index] = customer.getOrder().get(dish.getId());
-                prices[index] = dish.getPrice() * dish_numbers[index];
-            }
-        }
-
-        for(int i = 0; i < order_dishes.length; i++){
-            System.out.println("Dish: " + order_dishes[i].getName() + ", Num: " + dish_numbers[i] + ", Price: " + prices[i]);
+        int index = 0;
+        for(Order order : orders){
+            dish_names[index] = order.getDish().getName();
+            dish_prices[index] = order.getDish().getPrice();
+            dish_numbers[index] = order.getNumber();
+            total_prices[index] = order.getTotal();
+            index++;
         }
 
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("customer", customer);
-        model.addAttribute("dishes", order_dishes);
+        model.addAttribute("names", dish_names);
+        model.addAttribute("prices", dish_prices);
         model.addAttribute("numbers", dish_numbers);
-        model.addAttribute("prices", prices);
+        model.addAttribute("totals", total_prices);
 
         return "order/orderStatus";
     }

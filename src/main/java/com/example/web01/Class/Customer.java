@@ -1,12 +1,15 @@
 package com.example.web01.Class;
 
+import com.example.web01.Data.Order;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -17,7 +20,7 @@ public class Customer {
     private LocalDateTime registrationDate;
     private int totalMoney;
     private int restaurantId;
-    private Map<Long, Integer> order;
+    private List<Order> order;
     private String token;
 
     public Customer(int seatId, int restaurantId) {
@@ -27,7 +30,7 @@ public class Customer {
         this.numOfPeople = 0;
         this.totalMoney = 0;
         this.registrationDate = LocalDateTime.now();
-        this.order = new HashMap<>();
+        this.order = new ArrayList<>();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
         String formattedDate = registrationDate.format(formatter);
@@ -43,15 +46,8 @@ public class Customer {
         this(0, 0);
     }
 
-    public void addOrder(Map<Long, Integer> new_orders){
-        for(long id : new_orders.keySet()){
-            if(this.order.containsKey(id)){
-                this.order.put(id, this.order.get(id) + new_orders.get(id));
-            }
-            else{
-                this.order.put(id, new_orders.get(id));
-            }
-        }
+    public void addOrder(List<Order> new_orders){
+        this.order.addAll(new_orders);
     }
 
 }

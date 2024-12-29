@@ -71,6 +71,10 @@ public class RestaurantController {
             model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
             return "restaurant/checkCustomer";
         }
+        else if("viewCustomer".equals(action)){
+            model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
+            return "restaurant/viewCustomer";
+        }
         else if("makeQRcode".equals(action)) {
             String[] qrCodes = new String[restaurant.getSeatNum().intValue()];
             String[] inputs = new String[restaurant.getSeatNum().intValue()];
@@ -263,6 +267,30 @@ public class RestaurantController {
         model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
 
         return "restaurant/checkCustomer";
+    }
+
+    @PostMapping("/{restaurantId}/Customer/Control")
+    public String controlCustomer(@PathVariable Long restaurantId, @RequestParam("action") String action, Model model) {
+        RestaurantEntity restaurant = getRestaurant(restaurantId);
+        if(restaurant == null){
+            model.addAttribute("message", "An unexpected error has occurred. Please contact the administrator.");
+            return "restaurant/errorPage";
+        }
+
+        String[] parts = action.split("-");
+        int seatId = Integer.parseInt(parts[1]);
+        if(parts[0].equals("add")){
+            Customer new_customer = new Customer(seatId, restaurantId.intValue());
+            customerService.addCustomer(restaurantId, new_customer);
+        }
+        else if(parts[0].equals("remove")){
+            customerService.initializeCustomer(restaurantId, seatId);
+        }
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("customers", customerService.getCustomersByRestaurant(restaurantId));
+
+        return "restaurant/viewCustomer";
     }
 
     @GetMapping("/{restaurantId}/Update/QRCode")

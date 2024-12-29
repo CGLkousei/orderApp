@@ -18,11 +18,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="dish, iter : ${dishes}">
-            <td th:text="${dish.name}"></td>
-            <td th:text="${dish.price}"></td>
-            <td th:text="${numbers[iter.index]}"></td>
-            <td th:text="${prices[iter.index]}"></td>
+        <tr th:each="i : ${#numbers.sequence(0, names.length-1)}">
+            <td th:text="${names[i]}"></td>
+            <td th:text="${prices[i]}"></td>
+            <td th:text="${numbers[i]}"></td>
+            <td th:text="${totals[i]}"></td>
         </tr>
         </tbody>
     </table>

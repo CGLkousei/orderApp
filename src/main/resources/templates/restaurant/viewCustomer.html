@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>check Customer</title>
+</head>
+
+<body>
+    <table border="1">
+        <form th:action="@{/restaurant/{id}/Customer/Control(id=${restaurant.id})}" method="post">
+            <tr th:each="i : ${#numbers.sequence(1, restaurant.seatNum)}">
+                <div>
+                    席番号 : <span th:text="${i}"></span>
+                </div>
+
+                <div th:if="${customers.containsKey(i)}">
+                    注文開始日時 : <span th:text="${customers.get(i).registrationDate}"></span>
+                    合計金額 : <span th:text="${customers.get(i).totalMoney}"></span><br>
+                    注文内容 :
+                    <table>
+                        <tr th:each="order : ${customers.get(i).order}">
+                            <td th:text="${order.dish.name}"></td>
+                            <td th:text="${order.number}"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div th:if="${!customers.containsKey(i)}">
+                    注文開始日時 : <span>--</span>
+                    合計金額 : <span>--</span><br>
+                    注文内容 : --
+                </div>
+
+                <div th:if="${customers.containsKey(i)}">
+                    <button type="submit" name="action" th:value="'remove-' + ${i}">
+                        <span th:text="${i}"></span>の削除
+                    </button>
+                </div>
+                <div th:if="${!customers.containsKey(i)}">
+                    <button type="submit" name="action" th:value="'add-' + ${i}">
+                        <span th:text="${i}"></span>の追加
+                    </button>
+                </div>
+            </tr>
+        </form>
+    </table>
+
+    <a th:href="@{/restaurant/{id}/home(id=${restaurant.id})}">Homeに戻る</a>
+</body>
